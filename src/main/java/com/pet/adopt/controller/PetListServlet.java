@@ -4,11 +4,11 @@ import com.pet.adopt.entity.Pet;
 import com.pet.adopt.service.PetService;
 import com.pet.adopt.service.PetServiceImpl;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,8 +26,8 @@ public class PetListServlet extends HttpServlet {
         // 2. 把查询结果存入 request 域（供前端页面读取）
         req.setAttribute("petList", petList);
 
-        // 3. 转发到宠物列表页面（后续创建）
-        req.getRequestDispatcher("/pages/pet/list.jsp").forward(req, resp);
+        // 3. 转发到宠物列表页面
+        req.getRequestDispatcher("/list.jsp").forward(req, resp);
     }
 
     // 兼容 POST 请求（直接调用 doGet 方法）

@@ -8,6 +8,37 @@
   <name>Pet1.0 Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
+    <!-- Jakarta Servlet API 依赖（Tomcat 10 需要 Jakarta EE 9+） -->
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>5.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Jakarta JSP API 依赖 -->
+    <dependency>
+      <groupId>jakarta.servlet.jsp</groupId>
+      <artifactId>jakarta.servlet.jsp-api</artifactId>
+      <version>3.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Jakarta JSTL 依赖（用于 JSP 页面中的标签库） -->
+    <dependency>
+      <groupId>jakarta.servlet.jsp.jstl</groupId>
+      <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.web</groupId>
+      <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <!-- MySQL 数据库驱动 -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.33</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -18,6 +49,27 @@
   <build>
     <finalName>Pet1.0</finalName>
       <plugins>
+          <!-- Maven WAR 插件：确保 JSP 文件被正确打包 -->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.3.1</version>
+              <configuration>
+                  <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                  <failOnMissingWebXml>false</failOnMissingWebXml>
+              </configuration>
+          </plugin>
+          <!-- Maven 编译插件：设置 Java 版本 -->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.11.0</version>
+              <configuration>
+                  <source>11</source>
+                  <target>11</target>
+                  <encoding>UTF-8</encoding>
+              </configuration>
+          </plugin>
           <!-- 添加这个插件，支持运行 war 项目 -->
           <plugin>
               <groupId>org.eclipse.jetty</groupId>

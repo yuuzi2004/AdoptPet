@@ -19,7 +19,7 @@ public class PetDaoImpl implements PetDao {
             // 1. 获取数据库连接
             conn = JdbcUtils.getConnection();
             // 2. 编写SQL语句，? 是占位符
-            String sql = "INSERT INTO pet (name, type, age, gender, description) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO pet (name, type, age, gender, description, image_path) VALUES (?, ?, ?, ?, ?, ?)";
             // 3. 创建预处理语句对象
             pstmt = conn.prepareStatement(sql);
             // 4. 给占位符赋值
@@ -28,6 +28,7 @@ public class PetDaoImpl implements PetDao {
             pstmt.setInt(3, pet.getAge());
             pstmt.setString(4, pet.getGender());
             pstmt.setString(5, pet.getDescription());
+            pstmt.setString(6, pet.getImagePath());
             // 5. 执行SQL，返回受影响的行数
             int rows = pstmt.executeUpdate();
             // 6. 判断是否添加成功
@@ -49,7 +50,7 @@ public class PetDaoImpl implements PetDao {
         ResultSet rs = null;
         try {
             conn = JdbcUtils.getConnection();
-            String sql = "SELECT id, name, type, age, gender, description FROM pet";
+            String sql = "SELECT id, name, type, age, gender, description, image_path FROM pet";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             // 遍历结果集，封装成Pet对象并加入集合
@@ -61,6 +62,7 @@ public class PetDaoImpl implements PetDao {
                 pet.setAge(rs.getInt("age"));
                 pet.setGender(rs.getString("gender"));
                 pet.setDescription(rs.getString("description"));
+                pet.setImagePath(rs.getString("image_path"));
                 petList.add(pet);
             }
             return petList;
@@ -79,7 +81,7 @@ public class PetDaoImpl implements PetDao {
         ResultSet rs = null;
         try {
             conn = JdbcUtils.getConnection();
-            String sql = "SELECT id, name, type, age, gender, description FROM pet WHERE id = ?";
+            String sql = "SELECT id, name, type, age, gender, description, image_path FROM pet WHERE id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
             rs = pstmt.executeQuery();
@@ -91,6 +93,7 @@ public class PetDaoImpl implements PetDao {
                 pet.setAge(rs.getInt("age"));
                 pet.setGender(rs.getString("gender"));
                 pet.setDescription(rs.getString("description"));
+                pet.setImagePath(rs.getString("image_path"));
                 return pet;
             }
             return null;

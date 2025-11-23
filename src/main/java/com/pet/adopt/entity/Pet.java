@@ -3,10 +3,11 @@ package com.pet.adopt.entity;
 public class Pet {
     private Integer id;
     private String name;
-    private String type; // 如“猫”“狗”
+    private String type; // 如"猫""狗"
     private Integer age;
-    private String gender; // “公”“母”
+    private String gender; // "公""母"
     private String description; // 宠物描述
+    private String imagePath; // 宠物图片路径
 
     // 构造方法（无参、有参）
     public Pet() {}
@@ -16,6 +17,15 @@ public class Pet {
         this.age = age;
         this.gender = gender;
         this.description = description;
+    }
+    
+    public Pet(String name, String type, Integer age, String gender, String description, String imagePath) {
+        this.name = name;
+        this.type = type;
+        this.age = age;
+        this.gender = gender;
+        this.description = description;
+        this.imagePath = imagePath;
     }
 
     // Getter和Setter方法
@@ -31,6 +41,9 @@ public class Pet {
     public void setGender(String gender) { this.gender = gender; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
     // toString方法（方便调试）
     @Override

@@ -45,7 +45,17 @@ public class JdbcUtils {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("获取数据库连接失败！");
+            // 显示详细的错误信息，方便排查问题
+            String errorMsg = "获取数据库连接失败！\n" +
+                    "错误详情: " + e.getMessage() + "\n" +
+                    "数据库URL: " + url + "\n" +
+                    "用户名: " + username + "\n" +
+                    "常见原因：\n" +
+                    "1. MySQL 服务未启动\n" +
+                    "2. 数据库 'pet_adopt' 不存在\n" +
+                    "3. 用户名或密码错误\n" +
+                    "4. MySQL 端口不是 3306";
+            throw new RuntimeException(errorMsg, e);
         }
     }
 
