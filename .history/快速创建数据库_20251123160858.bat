@@ -1,0 +1,34 @@
+@echo off
+chcp 65001 >nul
+echo ============================================
+echo 宠物领养系统 - 数据库初始化脚本
+echo ============================================
+echo.
+
+echo 正在连接 MySQL...
+echo 请输入 MySQL root 密码（默认：HE04140626）
+echo.
+
+mysql -u root -p < database_init.sql
+
+if %errorlevel% == 0 (
+    echo.
+    echo ============================================
+    echo 数据库创建成功！
+    echo ============================================
+    echo 数据库名：pet_adopt
+    echo 表名：pet
+    echo.
+    echo 现在可以重新启动 Tomcat 并访问网站了。
+) else (
+    echo.
+    echo ============================================
+    echo 执行失败！请检查：
+    echo 1. MySQL 服务是否运行
+    echo 2. 密码是否正确
+    echo 3. MySQL 是否在 PATH 环境变量中
+    echo ============================================
+)
+
+pause
+

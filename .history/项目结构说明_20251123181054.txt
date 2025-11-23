@@ -1,0 +1,335 @@
+================================================================================
+                    宠物领养平台 - 项目结构说明文档
+================================================================================
+
+本文档详细说明了项目中所有Java类和包的作用，帮助团队成员快速了解项目架构。
+
+================================================================================
+一、项目整体架构
+================================================================================
+
+本项目采用经典的三层架构模式（MVC）：
+- Controller层（控制器层）：处理HTTP请求，调用Service层
+- Service层（业务逻辑层）：处理业务逻辑，调用DAO层
+- DAO层（数据访问层）：与数据库交互，执行SQL操作
+- Entity层（实体层）：数据模型，对应数据库表
+- Utils层（工具层）：提供通用工具类
+- Filter层（过滤器层）：请求拦截和过滤
+
+================================================================================
+二、包结构说明
+================================================================================
+
+com.pet.adopt
+├── controller/    控制器包 - 处理所有HTTP请求
+├── service/       业务逻辑包 - 处理业务逻辑
+├── dao/           数据访问包 - 数据库操作
+├── entity/        实体类包 - 数据模型
+├── utils/         工具类包 - 通用工具
+└── filter/        过滤器包 - 请求过滤
+
+================================================================================
+三、详细类说明
+================================================================================
+
+【Controller层 - 控制器包】
+路径：com.pet.adopt.controller
+
+1. IndexServlet.java
+   作用：首页控制器
+   功能：处理首页请求，查询宠物列表并展示
+   访问路径：/ (根路径)
+
+2. PetListServlet.java
+   作用：宠物列表控制器
+   功能：查询所有可领养宠物列表
+   访问路径：/pet/list
+
+3. PetAddServlet.java
+   作用：添加宠物控制器
+   功能：处理用户提交的宠物信息，支持图片上传
+   访问路径：/pet/add
+   特殊说明：使用@MultipartConfig支持文件上传
+
+4. PetSearchServlet.java
+   作用：寻宠信息控制器
+   功能：处理寻宠信息的发布和查询
+   访问路径：/pet/search
+   特殊说明：支持图片上传
+
+5. AdoptionServlet.java
+   作用：领养申请控制器
+   功能：处理领养申请的显示和提交
+   访问路径：/pet/adopt/*
+
+6. AdoptionSuccessServlet.java
+   作用：领养申请成功页面控制器
+   功能：显示申请成功页面
+   访问路径：/pet/adopt/success
+
+7. UserLoginServlet.java
+   作用：用户登录控制器
+   功能：处理用户登录验证
+   访问路径：/user/login
+
+8. UserRegisterServlet.java
+   作用：用户注册控制器
+   功能：处理新用户注册
+   访问路径：/user/register
+
+9. UserLogoutServlet.java
+   作用：用户退出登录控制器
+   功能：处理用户退出登录
+   访问路径：/user/logout
+
+10. AdminLoginServlet.java
+    作用：管理员登录控制器
+    功能：处理管理员登录验证
+    访问路径：/admin/login
+
+11. AdminLogoutServlet.java
+    作用：管理员退出登录控制器
+    功能：处理管理员退出登录
+    访问路径：/admin/logout
+
+12. AdminDashboardServlet.java
+    作用：管理员后台控制器
+    功能：显示管理员后台数据统计
+    访问路径：/admin/dashboard
+
+13. ImageServlet.java
+    作用：图片访问控制器
+    功能：安全地访问上传的图片文件
+    访问路径：/uploads/*
+
+================================================================================
+
+【Service层 - 业务逻辑包】
+路径：com.pet.adopt.service
+
+1. PetService.java
+   作用：宠物业务逻辑接口
+   功能：定义宠物相关的业务方法
+
+2. PetServiceImpl.java
+   作用：宠物业务逻辑实现类
+   功能：
+   - addPet() - 添加宠物
+   - findAllPets() - 查询所有宠物
+   - findPetById() - 根据ID查询宠物
+
+3. AdoptionService.java
+   作用：领养申请业务逻辑接口
+   功能：定义领养申请相关的业务方法
+
+4. AdoptionServiceImpl.java
+   作用：领养申请业务逻辑实现类
+   功能：
+   - submitApplication() - 提交领养申请
+   - getApplicationsByUserId() - 查询用户的申请列表
+   - getApplicationsByPetId() - 查询宠物的申请列表
+   - hasUserApplied() - 检查用户是否已申请
+
+================================================================================
+
+【DAO层 - 数据访问包】
+路径：com.pet.adopt.dao
+
+1. PetDao.java
+   作用：宠物数据访问接口
+   功能：定义宠物相关的数据库操作方法
+
+2. PetDaoImpl.java
+   作用：宠物数据访问实现类
+   功能：
+   - addPet() - 插入宠物信息到数据库
+   - findAllPets() - 查询所有宠物
+   - findPetById() - 根据ID查询宠物
+
+3. AdoptionDao.java
+   作用：领养申请数据访问接口
+   功能：定义领养申请相关的数据库操作方法
+
+4. AdoptionDaoImpl.java
+   作用：领养申请数据访问实现类
+   功能：
+   - addApplication() - 插入领养申请
+   - findApplicationsByUserId() - 查询用户的申请
+   - findApplicationsByPetId() - 查询宠物的申请
+   - findApplicationById() - 根据ID查询申请
+   - hasUserApplied() - 检查是否已申请
+
+================================================================================
+
+【Entity层 - 实体类包】
+路径：com.pet.adopt.entity
+
+1. Pet.java
+   作用：宠物实体类
+   对应表：pet
+   属性：
+   - id - 宠物ID
+   - name - 宠物名称
+   - type - 宠物类型（猫、狗等）
+   - age - 年龄
+   - gender - 性别（公/母）
+   - description - 描述
+   - imagePath - 图片路径
+
+2. User.java
+   作用：用户实体类
+   对应表：user
+   属性：
+   - id - 用户ID
+   - username - 用户名
+   - email - 邮箱
+   - phone - 手机号
+   - password - 密码
+   - createTime - 创建时间
+   - lastLoginTime - 最后登录时间
+
+3. Admin.java
+   作用：管理员实体类
+   对应表：admin
+   属性：
+   - id - 管理员ID
+   - username - 管理员账号
+   - password - 密码
+   - name - 姓名
+   - role - 角色
+
+4. AdoptionApplication.java
+   作用：领养申请实体类
+   对应表：adoption_application
+   属性：
+   - id - 申请ID
+   - petId - 宠物ID
+   - userId - 用户ID
+   - reason - 申请理由
+   - contact - 联系方式
+   - status - 状态（pending/approved/rejected）
+   - createTime - 申请时间
+   - processTime - 处理时间
+
+5. PetSearch.java
+   作用：寻宠信息实体类
+   对应表：pet_search
+   属性：
+   - id - 信息ID
+   - name - 宠物名称
+   - type - 宠物类型
+   - location - 丢失地点
+   - lostTime - 丢失时间
+   - description - 特征描述
+   - imagePath - 图片路径
+   - contact - 联系方式
+   - userId - 用户ID
+   - status - 状态（searching/found）
+
+================================================================================
+
+【Utils层 - 工具类包】
+路径：com.pet.adopt.utils
+
+1. JdbcUtils.java
+   作用：数据库连接工具类
+   功能：
+   - 加载数据库配置（从db.properties）
+   - 获取数据库连接
+   - 关闭数据库资源
+   说明：使用单例模式管理数据库连接
+
+2. FileUploadUtils.java
+   作用：文件上传工具类
+   功能：
+   - saveFile() - 保存上传的文件
+   - deleteFile() - 删除文件
+   - 验证文件类型（只允许图片）
+   - 验证文件大小（最大5MB）
+   - 生成唯一文件名（UUID）
+   说明：文件保存在webapp/uploads/目录
+
+================================================================================
+
+【Filter层 - 过滤器包】
+路径：com.pet.adopt.filter
+
+1. LoginFilter.java
+   作用：登录验证过滤器
+   功能：
+   - 拦截需要登录的请求
+   - 检查用户是否已登录
+   - 未登录则重定向到登录页
+   拦截路径：
+   - /pet/adopt/* - 领养申请
+   - /pet/add - 添加宠物
+   - /adopt.jsp - 申请页面
+   - /add.jsp - 添加页面
+
+================================================================================
+四、数据库表结构
+================================================================================
+
+1. pet - 宠物信息表
+   字段：id, name, type, age, gender, description, image_path, create_time
+
+2. user - 用户表
+   字段：id, username, email, phone, password, create_time, last_login_time
+
+3. admin - 管理员表
+   字段：id, username, password, name, role, create_time, last_login_time
+
+4. adoption_application - 领养申请表
+   字段：id, pet_id, user_id, reason, contact, status, create_time, process_time
+
+5. pet_search - 寻宠信息表
+   字段：id, name, type, location, lost_time, description, image_path, 
+         contact, user_id, status, create_time
+
+================================================================================
+五、前端页面说明
+================================================================================
+
+JSP页面位置：src/main/webapp/
+
+主要页面：
+- index.jsp - 首页
+- list.jsp - 宠物列表页
+- add.jsp - 发布宠物信息页
+- adopt.jsp - 领养申请页
+- adopt-success.jsp - 申请成功页
+- search.jsp - 寻找宠物页
+- login.jsp - 用户登录页
+- register.jsp - 用户注册页
+- admin/login.jsp - 管理员登录页
+- admin/dashboard.jsp - 管理员后台页
+
+================================================================================
+六、技术栈
+================================================================================
+
+- Java 11
+- Jakarta Servlet API 5.0
+- Jakarta JSP 3.0
+- Jakarta JSTL 2.0
+- MySQL 8.0
+- Maven 项目管理
+- Bootstrap 5.3 UI框架
+- Bootstrap Icons 图标库
+
+================================================================================
+七、项目特点
+================================================================================
+
+1. 采用MVC三层架构，代码结构清晰
+2. 使用过滤器实现登录验证
+3. 支持图片上传和展示
+4. 薄巧色马卡龙风格UI设计
+5. 响应式设计，支持移动端
+6. 完整的用户权限管理
+
+================================================================================
+文档版本：1.0
+最后更新：2025年
+================================================================================
+

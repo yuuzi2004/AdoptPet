@@ -1,0 +1,68 @@
+============================================
+快速创建数据库和表 - 详细步骤
+============================================
+
+方法一：使用 Navicat（最简单）
+----------------------------------------
+1. 打开 Navicat
+2. 连接到 MySQL（localhost:3306, root, 密码：HE04140626）
+3. 双击打开项目根目录的 database_init.sql 文件
+4. 点击"运行"按钮（或按 F5）
+5. 完成！
+
+方法二：使用命令行
+----------------------------------------
+1. 打开命令提示符（CMD）或 PowerShell
+2. 进入项目目录：
+   cd E:\java\AdoptPet
+3. 执行脚本：
+   mysql -u root -p < database_init.sql
+   输入密码：HE04140626
+4. 完成！
+
+方法三：手动执行 SQL（如果上面都不行）
+----------------------------------------
+1. 打开 Navicat 或 MySQL 命令行
+2. 连接到 MySQL
+3. 依次执行以下 SQL 语句：
+
+-- 步骤1：创建数据库
+CREATE DATABASE IF NOT EXISTS `pet_adopt` 
+    DEFAULT CHARACTER SET utf8mb4 
+    DEFAULT COLLATE utf8mb4_unicode_ci;
+
+-- 步骤2：使用数据库
+USE `pet_adopt`;
+
+-- 步骤3：创建表
+CREATE TABLE `pet` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '宠物ID，主键',
+  `name` VARCHAR(50) NOT NULL COMMENT '宠物名称',
+  `type` VARCHAR(20) NOT NULL COMMENT '宠物类型（猫、狗等）',
+  `age` INT(11) NOT NULL COMMENT '宠物年龄（单位：岁）',
+  `gender` VARCHAR(10) NOT NULL COMMENT '宠物性别（公/母）',
+  `description` TEXT COMMENT '宠物描述信息',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='宠物信息表';
+
+-- 步骤4：插入测试数据（可选）
+INSERT INTO `pet` (`name`, `type`, `age`, `gender`, `description`) VALUES
+('小白', '猫', 2, '母', '温顺可爱的小白猫，已绝育，喜欢和人亲近'),
+('旺财', '狗', 3, '公', '活泼好动的金毛，非常友好，适合有孩子的家庭'),
+('小花', '猫', 1, '母', '活泼的小花猫，喜欢玩耍，需要耐心陪伴'),
+('小黑', '狗', 4, '公', '忠诚的拉布拉多，训练有素，适合作为工作犬');
+
+-- 步骤5：验证
+SELECT * FROM `pet`;
+
+============================================
+验证是否成功
+============================================
+执行完成后，在 Navicat 中：
+1. 刷新数据库列表，应该能看到 "pet_adopt" 数据库
+2. 展开 pet_adopt，应该能看到 "pet" 表
+3. 右键 pet 表 → "打开表"，应该能看到 4 条测试数据
+
+如果都正常，就可以重新启动 Tomcat 并访问网站了！
+

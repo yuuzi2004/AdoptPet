@@ -1,0 +1,51 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# 数据库配置文件（包含敏感信息）
+src/main/resources/db.properties
+
+# 上传的文件
+src/main/webapp/uploads/*
+!src/main/webapp/uploads/.gitkeep
+
+# 日志文件
+*.log
+logs/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# 编译文件
+*.class
+*.jar
+*.war
+*.ear
+
+# 临时文件
+*.tmp
+*.bak
+*.cache

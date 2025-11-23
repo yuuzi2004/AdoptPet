@@ -1,0 +1,17 @@
+# 数据库配置文件示例
+# 使用前请复制此文件为 db.properties 并修改相应的配置信息
+
+# MySQL驱动
+jdbc.driver=com.mysql.cj.jdbc.Driver
+
+# 数据库连接URL
+# 格式：jdbc:mysql://主机地址:端口/数据库名?参数
+# 示例：jdbc:mysql://localhost:3306/pet_adopt?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+jdbc.url=jdbc:mysql://localhost:3306/pet_adopt?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+
+# 数据库用户名（请修改为你的MySQL用户名）
+jdbc.username=root
+
+# 数据库密码（请修改为你的MySQL密码）
+jdbc.password=your_password_here
+
