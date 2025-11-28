@@ -102,6 +102,21 @@ com.pet.adopt
     功能：安全地访问上传的图片文件
     访问路径：/uploads/*
 
+14. AdminAdoptionServlet.java
+    作用：管理员处理领养申请
+    功能：查看并处理领养申请
+    访问路径：/admin/adoption/*
+
+15. AdminPetEditServlet.java
+    作用：管理员修改宠物信息
+    功能：编辑宠物信息
+    访问路径：/admin/adoption/*
+
+16. AdminPetUpdateServlet.java
+    作用：宠物更新控制器
+    功能：处理修改后的宠物信息保存
+    访问路径：/admin/adoption/*
+
 ================================================================================
 
 【Service层 - 业务逻辑包】
@@ -303,6 +318,9 @@ JSP页面位置：src/main/webapp/
 - register.jsp - 用户注册页
 - admin/login.jsp - 管理员登录页
 - admin/dashboard.jsp - 管理员后台页
+- login_choice.jsp - 登录选择页
+- adoption-applications.jsp - 管理员查看领养申请的页面
+- eidt-pet.jsp - 编辑宠物信息的页面
 
 ================================================================================
 六、技术栈

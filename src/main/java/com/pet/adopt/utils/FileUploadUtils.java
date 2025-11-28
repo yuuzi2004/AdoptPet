@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * 文件上传工具类
  */
-public class FileUploadUtils {
+public class    FileUploadUtils {
     
     // 上传目录（相对于webapp目录）
     private static final String UPLOAD_DIR = "uploads";

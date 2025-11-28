@@ -388,17 +388,17 @@
                         </c:when>
                         <c:otherwise>
                             <li class="nav-item">
-                                <a class="nav-link" href="${pageContext.request.contextPath}/login.jsp">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/login_choice.jsp">
                                     <i class="bi bi-person-circle me-1"></i>登录
                                 </a>
                             </li>
                         </c:otherwise>
                     </c:choose>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/login.jsp">
-                            <i class="bi bi-shield-lock me-1"></i>管理员
-                        </a>
-                    </li>
+<%--                    <li class="nav-item">--%>
+<%--                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/login.jsp">--%>
+<%--                            <i class="bi bi-shield-lock me-1"></i>管理员--%>
+<%--                        </a>--%>
+<%--                    </li>--%>
                 </ul>
             </div>
         </div>
