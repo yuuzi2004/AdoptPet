@@ -16,28 +16,21 @@ public class PetDaoImpl implements PetDao {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
-            // 1. 获取数据库连接
             conn = JdbcUtils.getConnection();
-            // 2. 编写SQL语句，? 是占位符
             String sql = "INSERT INTO pet (name, type, age, gender, description, image_path) VALUES (?, ?, ?, ?, ?, ?)";
-            // 3. 创建预处理语句对象
             pstmt = conn.prepareStatement(sql);
-            // 4. 给占位符赋值
             pstmt.setString(1, pet.getName());
             pstmt.setString(2, pet.getType());
             pstmt.setInt(3, pet.getAge());
             pstmt.setString(4, pet.getGender());
             pstmt.setString(5, pet.getDescription());
             pstmt.setString(6, pet.getImagePath());
-            // 5. 执行SQL，返回受影响的行数
             int rows = pstmt.executeUpdate();
-            // 6. 判断是否添加成功
             return rows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         } finally {
-            // 7. 关闭资源
             JdbcUtils.close(conn, pstmt);
         }
     }
@@ -53,7 +46,6 @@ public class PetDaoImpl implements PetDao {
             String sql = "SELECT id, name, type, age, gender, description, image_path FROM pet";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-            // 遍历结果集，封装成Pet对象并加入集合
             while (rs.next()) {
                 Pet pet = new Pet();
                 pet.setId(rs.getInt("id"));
@@ -97,6 +89,71 @@ public class PetDaoImpl implements PetDao {
                 return pet;
             }
             return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            JdbcUtils.close(conn, pstmt, rs);
+        }
+    }
+
+    // 实现带类型、性别、年龄范围的条件查询
+    @Override
+    public List<Pet> findPetsByCondition(String type, String gender, Integer minAge, Integer maxAge) {
+        List<Pet> petList = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = JdbcUtils.getConnection();
+            // 动态构建SQL查询条件
+            StringBuilder sql = new StringBuilder("SELECT id, name, type, age, gender, description, image_path FROM pet WHERE 1=1");
+            List<Object> params = new ArrayList<>();
+
+            // 类型筛选条件
+            if (type != null && !type.trim().isEmpty()) {
+                sql.append(" AND type = ?");
+                params.add(type.trim());
+            }
+
+            // 性别筛选条件
+            if (gender != null && !gender.trim().isEmpty()) {
+                sql.append(" AND gender = ?");
+                params.add(gender.trim());
+            }
+
+            // 最小年龄筛选条件（年龄 >= minAge）
+            if (minAge != null && minAge >= 0) {
+                sql.append(" AND age >= ?");
+                params.add(minAge);
+            }
+
+            // 最大年龄筛选条件（年龄 <= maxAge）
+            if (maxAge != null && maxAge >= 0) {
+                sql.append(" AND age <= ?");
+                params.add(maxAge);
+            }
+
+            pstmt = conn.prepareStatement(sql.toString());
+            // 设置参数（按添加顺序）
+            for (int i = 0; i < params.size(); i++) {
+                pstmt.setObject(i + 1, params.get(i));
+            }
+
+            rs = pstmt.executeQuery();
+            // 封装查询结果
+            while (rs.next()) {
+                Pet pet = new Pet();
+                pet.setId(rs.getInt("id"));
+                pet.setName(rs.getString("name"));
+                pet.setType(rs.getString("type"));
+                pet.setAge(rs.getInt("age"));
+                pet.setGender(rs.getString("gender"));
+                pet.setDescription(rs.getString("description"));
+                pet.setImagePath(rs.getString("image_path"));
+                petList.add(pet);
+            }
+            return petList;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

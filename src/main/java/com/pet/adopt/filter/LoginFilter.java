@@ -13,38 +13,32 @@ import java.nio.charset.StandardCharsets;
  * 登录验证过滤器
  * 同时验证用户和管理员的登录状态，区分不同角色的访问权限
  */
-@WebFilter(filterName = "LoginFilter", urlPatterns = {
-        "/pet/adopt/*",
-        "/pet/add",
-        "/adopt.jsp",
-        "/add.jsp",
-        "/admin/*"  // 拦截所有管理员路径
-})
+@WebFilter(filterName = "LoginFilter", urlPatterns = "/*")
 public class LoginFilter implements Filter {
+
 
     // 不需要登录验证的路径（包含用户和管理员的公开路径）
     private static final String[] EXCLUDE_PATHS = {
-            // 用户公开路径
-            "/login.jsp",
-            "/register.jsp",
-            "/user/login",
-            "/user/register",
-            "/pet/list",
-            "/",
-            "/index.jsp",
-            "/login_choice.jsp",  // 登录选择页
+            // 允许匿名访问的首页（关键：保留首页可直接访问）
+            "/",                  // 根路径（首页）
+            "/index.jsp",         // 首页JSP
 
-            // 管理员公开路径
+
+            // 登录/注册相关页面（必须保留，否则无法登录）
+            "/login.jsp",         // 用户登录页
+            "/register.jsp",      // 用户注册页
+            "/login_choice.jsp",  // 登录选择页
+            "/user/login",        // 用户登录接口
+            "/user/register",     // 用户注册接口
             "/admin/login.jsp",   // 管理员登录页
             "/admin/login",       // 管理员登录接口
-            "/admin/dashboard",   // 后台首页
-            "/admin/pet/list",    // 宠物列表
-            "/admin/pet/edit",    // 宠物编辑
-            "/admin/pet/delete",  // 宠物删除
-            "/admin/user/list",   // 用户列表
-            "/admin/user/edit",   // 用户编辑
-            "/admin/application/list", // 领养申请列表
-            "/admin/application/approve" // 领养申请审核
+
+
+            // 静态资源（确保首页样式、图片正常加载）
+            "/css/*",             // CSS样式
+            "/js/*",              // JavaScript脚本
+            "/images/*",          // 图片资源
+            "/uploads/*"          // 上传的图片（如首页展示的宠物图片）
     };
 
     @Override

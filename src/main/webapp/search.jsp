@@ -186,7 +186,7 @@
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="${pageContext.request.contextPath}/">
                 <i class="bi bi-paw-fill me-2"></i>毛孩子领养平台
@@ -200,7 +200,30 @@
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/add.jsp">发布信息</a></li>
                     <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/search.jsp">寻找宠物</a></li>
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/login.jsp">登录</a></li>
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.userId}">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-circle me-1"></i>${sessionScope.username}
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/logout">退出登录</a></li>
+                                </ul>
+                            </li>
+                        </c:when>
+                        <c:otherwise>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/login_choice.jsp">
+                                    <i class="bi bi-person-circle me-1"></i>登录
+                                </a>
+                            </li>
+                        </c:otherwise>
+                    </c:choose>
+                    <%--                    <li class="nav-item">--%>
+                    <%--                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/login.jsp">--%>
+                    <%--                            <i class="bi bi-shield-lock me-1"></i>管理员--%>
+                    <%--                        </a>--%>
+                    <%--                    </li>--%>
                 </ul>
             </div>
         </div>
@@ -359,18 +382,26 @@
                     <p class="text-white-50 mb-0">用爱终止流浪，让每个生命都有归宿</p>
                 </div>
                 <div class="col-md-4">
-                    <h5 class="mb-3">快速链接</h5>
+                    <h5 class="footer-title">快速链接</h5>
                     <ul class="list-unstyled">
-                        <li><a href="${pageContext.request.contextPath}/" class="text-white-50 text-decoration-none">首页</a></li>
-                        <li><a href="${pageContext.request.contextPath}/pet/list" class="text-white-50 text-decoration-none">领养列表</a></li>
-                        <li><a href="${pageContext.request.contextPath}/search.jsp" class="text-white-50 text-decoration-none">寻找宠物</a></li>
+                        <li><a href="${pageContext.request.contextPath}/" class="footer-link">首页</a></li>
+                        <li><a href="${pageContext.request.contextPath}/pet/list" class="footer-link">领养列表</a></li>
+                        <li><a href="${pageContext.request.contextPath}/add.jsp" class="footer-link">发布信息</a></li>
+                        <li><a href="${pageContext.request.contextPath}/search.jsp" class="footer-link">寻找宠物</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h5 class="mb-3">联系我们</h5>
-                    <ul class="list-unstyled text-white-50">
-                        <li><i class="bi bi-phone me-2"></i>123-4567-8910</li>
-                        <li><i class="bi bi-envelope me-2"></i>adopt@maohaizi.com</li>
+                    <h5 class="footer-title">联系我们</h5>
+                    <ul class="list-unstyled">
+                        <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
+                            <i class="bi bi-phone me-2"></i>19967849558
+                        </li>
+                        <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
+                            <i class="bi bi-envelope me-2"></i>2180392550@qq.com
+                        </li>
+                        <li style="color: rgba(255,255,255,0.7);">
+                            <i class="bi bi-geo-alt me-2"></i>湖南省长沙市芙蓉区农大路1号
+                        </li>
                     </ul>
                 </div>
             </div>

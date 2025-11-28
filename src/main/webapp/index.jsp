@@ -363,18 +363,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="${pageContext.request.contextPath}/">首页</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/add.jsp">发布信息</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${pageContext.request.contextPath}/search.jsp">寻找宠物</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/">首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/add.jsp">发布信息</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/search.jsp">寻找宠物</a></li>
                     <c:choose>
                         <c:when test="${not empty sessionScope.userId}">
                             <li class="nav-item dropdown">
@@ -621,13 +613,13 @@
                     <h5 class="footer-title">联系我们</h5>
                     <ul class="list-unstyled">
                         <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
-                            <i class="bi bi-phone me-2"></i>123-4567-8910
+                            <i class="bi bi-phone me-2"></i>19967849558
                         </li>
                         <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
-                            <i class="bi bi-envelope me-2"></i>adopt@maohaizi.com
+                            <i class="bi bi-envelope me-2"></i>2180392550@qq.com
                         </li>
                         <li style="color: rgba(255,255,255,0.7);">
-                            <i class="bi bi-geo-alt me-2"></i>北京市朝阳区爱心路123号
+                            <i class="bi bi-geo-alt me-2"></i>湖南省长沙市芙蓉区农大路1号
                         </li>
                     </ul>
                 </div>

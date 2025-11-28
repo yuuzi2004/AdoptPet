@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新增可领养宠物 - 毛孩子领养平台</title>
+    <title>发布信息 - 毛孩子领养平台</title>
     <!-- 引入 Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入图标库 -->
@@ -299,7 +299,8 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/">首页</a></li>
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
-                <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/add.jsp">提交领养信息</a></li>
+                <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/add.jsp">发布信息</a></li>
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/search.jsp">寻找宠物</a></li>
                 <c:choose>
                     <c:when test="${not empty sessionScope.userId}">
                         <li class="nav-item dropdown">
@@ -327,7 +328,7 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card form-card">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>新增可领养宠物</h4>
+                        <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>发布信息</h4>
                     </div>
                     <div class="card-body">
                         <c:if test="${empty sessionScope.userId}">
@@ -539,19 +540,27 @@
                 <h5 class="mb-3"><i class="bi bi-paw-fill me-2"></i>毛孩子领养平台</h5>
                 <p>用爱终止流浪，让每个生命都有归宿</p>
             </div>
-            <div class="col-md-4 mb-4">
-                <h5 class="mb-3">快速链接</h5>
-                <ul class="list-unstyled">
-                    <li><a href="${pageContext.request.contextPath}/" class="text-white/80 text-decoration-none">首页</a></li>
-                    <li><a href="${pageContext.request.contextPath}/pet/list" class="text-white/80 text-decoration-none">领养列表</a></li>
-                    <li><a href="${pageContext.request.contextPath}/add.jsp" class="text-white/80 text-decoration-none">提交信息</a></li>
-                </ul>
-            </div>
+            <<div class="col-md-4">
+            <h5 class="footer-title">快速链接</h5>
+            <ul class="list-unstyled">
+                <li><a href="${pageContext.request.contextPath}/" class="footer-link">首页</a></li>
+                <li><a href="${pageContext.request.contextPath}/pet/list" class="footer-link">领养列表</a></li>
+                <li><a href="${pageContext.request.contextPath}/add.jsp" class="footer-link">发布信息</a></li>
+                <li><a href="${pageContext.request.contextPath}/search.jsp" class="footer-link">寻找宠物</a></li>
+            </ul>
+        </div>
             <div class="col-md-4">
-                <h5 class="mb-3">联系我们</h5>
+                <h5 class="footer-title">联系我们</h5>
                 <ul class="list-unstyled">
-                    <li><i class="bi bi-phone me-2"></i>123-4567-8910</li>
-                    <li><i class="bi bi-envelope me-2"></i>adopt@maohaizi.com</li>
+                    <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
+                        <i class="bi bi-phone me-2"></i>19967849558
+                    </li>
+                    <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
+                        <i class="bi bi-envelope me-2"></i>2180392550@qq.com
+                    </li>
+                    <li style="color: rgba(255,255,255,0.7);">
+                        <i class="bi bi-geo-alt me-2"></i>湖南省长沙市芙蓉区农大路1号
+                    </li>
                 </ul>
             </div>
         </div>

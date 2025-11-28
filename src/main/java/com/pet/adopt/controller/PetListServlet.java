@@ -12,27 +12,62 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-// 注解配置 Servlet 访问路径：前端通过 /pet/list 访问这个 Servlet
 @WebServlet("/pet/list")
 public class PetListServlet extends HttpServlet {
-    // 依赖 Service 层对象
     private PetService petService = new PetServiceImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 1. 调用 Service 层查询所有宠物
-        List<Pet> petList = petService.findAllPets();
+        // 1. 获取前端传递的筛选参数（类型、性别、年龄范围）
+        String type = req.getParameter("type");
+        String gender = req.getParameter("gender");
+        String minAgeStr = req.getParameter("minAge");
+        String maxAgeStr = req.getParameter("maxAge");
 
-        // 2. 把查询结果存入 request 域（供前端页面读取）
+        // 2. 处理年龄参数：转换为Integer类型，空值则设为null
+        Integer minAge = null;
+        Integer maxAge = null;
+        if (minAgeStr != null && !minAgeStr.trim().isEmpty()) {
+            try {
+                minAge = Integer.parseInt(minAgeStr.trim());
+            } catch (NumberFormatException e) {
+                minAge = null; // 转换失败则设为null，不参与筛选
+            }
+        }
+        if (maxAgeStr != null && !maxAgeStr.trim().isEmpty()) {
+            try {
+                maxAge = Integer.parseInt(maxAgeStr.trim());
+            } catch (NumberFormatException e) {
+                maxAge = null; // 转换失败则设为null，不参与筛选
+            }
+        }
+
+        // 3. 根据参数调用对应的查询方法
+        List<Pet> petList;
+        if ((type == null || type.trim().isEmpty())
+                && (gender == null || gender.trim().isEmpty())
+                && minAge == null
+                && maxAge == null) {
+            // 无筛选条件时查询所有
+            petList = petService.findAllPets();
+        } else {
+            // 有筛选条件时调用带年龄的条件查询
+            petList = petService.findPetsByCondition(type, gender, minAge, maxAge);
+        }
+
+        // 4. 把查询结果和筛选参数存入request域（供前端回显）
         req.setAttribute("petList", petList);
+        req.setAttribute("selectedType", type);
+        req.setAttribute("selectedGender", gender);
+        req.setAttribute("selectedMinAge", minAgeStr);
+        req.setAttribute("selectedMaxAge", maxAgeStr);
 
-        // 3. 转发到宠物列表页面
+        // 5. 转发到宠物列表页面
         req.getRequestDispatcher("/list.jsp").forward(req, resp);
     }
 
-    // 兼容 POST 请求（直接调用 doGet 方法）
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
+        doGet(req, resp); // 兼容 POST 请求
     }
 }
