@@ -535,23 +535,23 @@
     </div>
 </section>
 
-<!-- 页脚（和首页一致） -->
-<footer class="bg-dark text-white py-6">
+<!-- 页脚 -->
+<footer class="bg-dark text-white py-5 mt-5">
     <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-4">
+        <div class="row g-4">
+            <div class="col-md-4">
                 <h5 class="mb-3"><i class="bi bi-paw-fill me-2"></i>毛孩子领养平台</h5>
-                <p>用爱终止流浪，让每个生命都有归宿</p>
+                <p class="text-white-50 mb-0">用爱终止流浪，让每个生命都有归宿</p>
             </div>
-            <<div class="col-md-4">
-            <h5 class="footer-title">快速链接</h5>
-            <ul class="list-unstyled">
-                <li><a href="${pageContext.request.contextPath}/" class="footer-link">首页</a></li>
-                <li><a href="${pageContext.request.contextPath}/pet/list" class="footer-link">领养列表</a></li>
-                <li><a href="${pageContext.request.contextPath}/add.jsp" class="footer-link">发布信息</a></li>
-                <li><a href="${pageContext.request.contextPath}/search.jsp" class="footer-link">寻找宠物</a></li>
-            </ul>
-        </div>
+            <div class="col-md-4">
+                <h5 class="footer-title">快速链接</h5>
+                <ul class="list-unstyled">
+                    <li><a href="${pageContext.request.contextPath}/" class="footer-link">首页</a></li>
+                    <li><a href="${pageContext.request.contextPath}/pet/list" class="footer-link">领养列表</a></li>
+                    <li><a href="${pageContext.request.contextPath}/add.jsp" class="footer-link">发布信息</a></li>
+                    <li><a href="${pageContext.request.contextPath}/search.jsp" class="footer-link">寻找宠物</a></li>
+                </ul>
+            </div>
             <div class="col-md-4">
                 <h5 class="footer-title">联系我们</h5>
                 <ul class="list-unstyled">
@@ -567,8 +567,8 @@
                 </ul>
             </div>
         </div>
-        <div class="border-top border-white/20 mt-4 pt-4 text-center text-white/60">
-            © 2025 毛孩子领养平台 版权所有
+        <div class="border-top border-secondary mt-4 pt-4 text-center text-white-50">
+            <p class="mb-0">© 2025 毛孩子领养平台 版权所有</p>
         </div>
     </div>
 </footer>

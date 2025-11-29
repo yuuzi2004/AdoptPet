@@ -292,7 +292,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
             <div class="text-center mt-4">
-                <a href="${pageContext.request.contextPath}/pet/list" class="btn btn-primary btn-action">
+                <a href="${pageContext.request.contextPath}/list" class="btn btn-primary btn-action">
                     <i class="bi bi-arrow-left me-2"></i>返回领养列表
                 </a>
             </div>

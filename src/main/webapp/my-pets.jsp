@@ -373,6 +373,114 @@
                 </div>
             </c:otherwise>
         </c:choose>
+        <!-- 新增：我的领养申请记录板块 -->
+        <div class="mt-5">
+            <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <h1 class="page-title">
+                        <i class="bi bi-file-earmark-check text-primary me-2" style="font-size: 1.5rem;"></i>
+                        我的领养申请记录
+                    </h1>
+                    <p class="text-muted mb-0 mt-2">
+                        <c:choose>
+                            <c:when test="${not empty applicationList}">
+                                共提交了 <strong>${applicationList.size()}</strong> 条领养申请
+                            </c:when>
+                            <c:otherwise>
+                                您还没有提交任何领养申请
+                            </c:otherwise>
+                        </c:choose>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 申请记录列表 -->
+            <c:choose>
+                <c:when test="${not empty applicationList}">
+                    <div class="row g-4 mt-3">
+                        <c:forEach items="${applicationList}" var="application">
+                            <div class="col-12">
+                                <div class="pet-card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-wrap gap-4">
+                                            <!-- 宠物信息 -->
+                                            <div class="flex-grow-1">
+                                                <h5 class="card-title">
+                                                    <i class="bi bi-heart-fill text-danger me-1"></i>
+                                                    申请领养：${application.petName}
+                                                </h5>
+                                                <div class="pet-info">
+                                            <span class="pet-info-item">
+                                                <i class="bi bi-paw"></i>
+                                                类型：${application.pet.type}
+                                            </span>
+                                                    <span class="pet-info-item">
+                                                <i class="bi bi-calendar"></i>
+                                                年龄：${application.pet.age}岁
+                                            </span>
+                                                    <span class="pet-info-item">
+                                                <i class="bi bi-clock"></i>
+                                                申请时间：${application.createTime}
+                                            </span>
+                                                </div>
+                                                <p class="mt-2">
+                                                    <strong>申请理由：</strong>
+                                                    <span class="text-muted">${application.reason}</span>
+                                                </p>
+                                                <p>
+                                                    <strong>联系方式：</strong>
+                                                    <span class="text-muted">${application.contact}</span>
+                                                </p>
+                                            </div>
+
+                                            <!-- 审核状态 -->
+                                            <div class="d-flex align-items-center">
+                                                <c:choose>
+                                                    <c:when test="${application.status == 'pending'}">
+                                                <span class="badge-type bg-warning text-dark">
+                                                    <i class="bi bi-hourglass-half me-1"></i>${application.statusCN}
+                                                </span>
+                                                    </c:when>
+                                                    <c:when test="${application.status == 'approved'}">
+                                                <span class="badge-type bg-success text-white">
+                                                    <i class="bi bi-check-circle me-1"></i>${application.statusCN}
+                                                </span>
+                                                    </c:when>
+                                                    <c:when test="${application.status == 'rejected'}">
+                                                <span class="badge-type bg-danger text-white">
+                                                    <i class="bi bi-x-circle me-1"></i>${application.statusCN}
+                                                </span>
+                                                    </c:when>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a href="${pageContext.request.contextPath}/pet/detail?id=${application.petId}"
+                                           class="btn btn-sm btn-outline-primary btn-action">
+                                            <i class="bi bi-info-circle me-1"></i>查看宠物详情
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <!-- 申请记录空状态 -->
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-file-earmark-check"></i>
+                        </div>
+                        <h4>还没有提交任何领养申请</h4>
+                        <p>去领养列表看看有没有心仪的毛孩子吧！</p>
+                        <a href="${pageContext.request.contextPath}/pet/list" class="btn btn-primary btn-action">
+                            <i class="bi bi-list-ul me-2"></i>浏览领养列表
+                        </a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
 </section>
 

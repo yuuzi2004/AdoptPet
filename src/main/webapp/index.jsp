@@ -113,7 +113,7 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        
+        /* 英雄按钮基础样式（统一尺寸/圆角/过渡） */
         .btn-hero {
             padding: 0.875rem 2rem;
             font-size: 1.1rem;
@@ -121,34 +121,52 @@
             border-radius: 50px;
             transition: all 0.3s ease;
             border: none;
+            position: relative;
+            z-index: 1;
         }
-        
-        .btn-hero-primary {
-            background: white;
-            color: #2d5016;
-            font-weight: 600;
+
+        /* 立即领养按钮：白色底+薄荷绿文字（突出且不刺眼） */
+        .btn-hero-adopt {
+            background: #ffffff;
+            color: #66bb6a; /* 柔和薄荷绿，和背景区分 */
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.2);
         }
-        
-        .btn-hero-primary:hover {
+
+        .btn-hero-adopt:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255,255,255,0.5);
-            background: #fff9c4;
+            box-shadow: 0 10px 25px rgba(102, 187, 106, 0.3);
+            background: #f9fff9; /* 微绿白，hover更柔和 */
+            color: #43a047; /* 加深一点，增强对比 */
         }
-        
-        .btn-hero-outline {
-            background: transparent;
-            color: #2d5016;
-            border: 2px solid #2d5016;
-            font-weight: 600;
+
+        /* 发布信息按钮：淡粉色底+深粉文字（和背景薄荷绿形成柔和对比） */
+        .btn-hero-publish {
+            background: #ffebee; /* 极浅粉，不突兀且和背景区分 */
+            color: #e57373; /* 柔和粉，避免刺眼 */
+            box-shadow: 0 4px 12px rgba(229, 115, 115, 0.2);
         }
-        
-        .btn-hero-outline:hover {
-            background: white;
-            color: #1a3009;
+
+        .btn-hero-publish:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255,255,255,0.3);
+            box-shadow: 0 10px 25px rgba(229, 115, 115, 0.3);
+            background: #ffd7d9; /* 稍深粉，hover层次感 */
+            color: #d32f2f; /* 加深一点，增强对比 */
         }
-        
+
+        /* 宝贝回家按钮：淡黄色底+暖黄文字（柔和且和前两个颜色协调） */
+        .btn-hero-find {
+            background: #fff8e1; /* 极浅黄，温暖不突兀 */
+            color: #ffb74d; /* 柔和暖黄，和前两个颜色形成冷暖平衡 */
+            box-shadow: 0 4px 12px rgba(255, 183, 77, 0.2);
+        }
+
+        .btn-hero-find:hover {
+            background: #fff3e0; /* 稍深黄，hover层次感 */
+            color: #f57c00; /* 加深一点，增强对比 */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 183, 77, 0.3);
+        }
+
         /* 功能卡片区域 */
         .features-section {
             padding: 80px 0;
@@ -410,11 +428,14 @@
                         每一个毛孩子都值得被温柔以待。
                     </p>
                     <div class="hero-buttons">
-                        <a href="${pageContext.request.contextPath}/pet/list" class="btn btn-hero btn-hero-primary">
+                        <a href="${pageContext.request.contextPath}/pet/list" class="btn btn-hero btn-hero-adopt">
                             <i class="bi bi-heart-fill me-2"></i>立即领养
                         </a>
-                        <a href="${pageContext.request.contextPath}/add.jsp" class="btn btn-hero btn-hero-outline">
+                        <a href="${pageContext.request.contextPath}/add.jsp" class="btn btn-hero btn-hero-publish">
                             <i class="bi bi-plus-circle me-2"></i>发布信息
+                        </a>
+                        <a href="${pageContext.request.contextPath}/search.jsp" class="btn btn-hero btn-hero-find">
+                            <i class="bi bi-house-heart-fill me-2"></i>宝贝回家
                         </a>
                     </div>
                 </div>
@@ -433,8 +454,9 @@
         <div class="container">
             <h2 class="section-title">平台功能</h2>
             <p class="section-subtitle">一站式宠物领养服务平台，让领养更简单</p>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
+            <div class="row g-4 justify-content-center">
+                <!-- 领养功能 -->
+                <div class="col-md-4 col-lg-3">
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="bi bi-heart-pulse"></i>
@@ -448,7 +470,9 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+
+                <!-- 发布功能 -->
+                <div class="col-md-4 col-lg-3">
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="bi bi-file-earmark-plus"></i>
@@ -462,7 +486,9 @@
                         </a>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+
+                <!-- 寻找功能 -->
+                <div class="col-md-4 col-lg-3">
                     <div class="feature-card">
                         <div class="feature-icon">
                             <i class="bi bi-search"></i>
@@ -473,20 +499,6 @@
                         </p>
                         <a href="${pageContext.request.contextPath}/search.jsp" class="btn btn-outline-warning mt-3">
                             开始寻找 <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="bi bi-people"></i>
-                        </div>
-                        <h3 class="feature-title">社区互动</h3>
-                        <p class="feature-description">
-                            加入我们的爱心社区，分享领养故事，交流养宠经验，传递温暖与关爱。
-                        </p>
-                        <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-outline-danger mt-3">
-                            加入我们 <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
