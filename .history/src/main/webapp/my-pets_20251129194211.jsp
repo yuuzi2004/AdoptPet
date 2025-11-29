@@ -5,19 +5,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>宠物领养列表 - 毛孩子领养平台</title>
+    <title>我的发布 - 毛孩子领养平台</title>
     <!-- 引入 Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入图标库 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         :root {
-            /* 薄巧色（薄荷绿）马卡龙配色 */
-            --primary-color: #a8e6cf; /* 薄荷绿 */
-            --secondary-color: #ffd3d3; /* 粉红 */
-            --accent-color: #c7ecee; /* 淡蓝 */
-            --purple-color: #e8d5ff; /* 淡紫 */
-            --yellow-color: #fff9c4; /* 淡黄 */
+            --primary-color: #a8e6cf;
+            --secondary-color: #ffd3d3;
+            --accent-color: #c7ecee;
             --success-color: #a8e6cf;
             --danger-color: #ffaaa5;
             --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -55,11 +52,6 @@
             border-radius: 8px;
         }
 
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
         .page-header {
             margin-bottom: 2rem;
         }
@@ -69,14 +61,6 @@
             font-weight: 700;
             color: #1f2937;
             margin-bottom: 0;
-        }
-
-        .filter-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
         }
 
         .pet-card {
@@ -140,10 +124,6 @@
             color: #6b7280;
         }
 
-        .pet-info-item i {
-            color: var(--primary-color);
-        }
-
         .pet-description {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -180,76 +160,17 @@
             color: #1a3009;
         }
 
-        .btn-outline-primary {
-            border-color: var(--primary-color);
-            color: #2d5016;
+        .btn-danger {
+            background: linear-gradient(135deg, #ffaaa5 0%, #ffd3d3 100%);
+            border: none;
+            color: #721c24;
+            font-weight: 600;
         }
 
-        .btn-outline-primary:hover {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-color: var(--primary-color);
+        .btn-danger:hover {
             transform: translateY(-2px);
-            color: #1a3009;
-        }
-
-        .empty-state {
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            color: #d1d5db;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-state h4 {
-            color: #6b7280;
-            margin-bottom: 0.5rem;
-        }
-
-        .empty-state p {
-            color: #9ca3af;
-            margin-bottom: 1.5rem;
-        }
-
-        footer {
-            margin-top: 4rem;
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-select {
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            padding: 0.625rem 1rem;
-        }
-
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .section {
-                padding: 30px 0;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-            }
-
-            .filter-card {
-                padding: 1rem;
-            }
-
-            .pet-card img {
-                height: 180px;
-            }
+            box-shadow: 0 4px 12px rgba(255, 170, 165, 0.6);
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffaaa5 100%);
         }
 
         .badge-type {
@@ -262,81 +183,20 @@
             color: #2d5016;
         }
 
-        /* 爱心按钮样式 */
-        .btn-adopt-heart {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffaaa5 0%, #ffd3d3 100%);
-            border: 2px solid #ffaaa5;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(255, 170, 165, 0.3);
-            position: relative;
-            overflow: hidden;
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
         }
 
-        .btn-adopt-heart::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn-adopt-heart:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-adopt-heart:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 6px 20px rgba(255, 170, 165, 0.5);
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffaaa5 100%);
-            border-color: #ff6b6b;
-        }
-
-        .btn-adopt-heart:active {
-            transform: translateY(-1px) scale(1.05);
-        }
-
-        .btn-adopt-heart i {
-            font-size: 1.2rem;
-            position: relative;
-            z-index: 1;
-            transition: all 0.3s ease;
-        }
-
-        .btn-adopt-heart:hover i {
-            transform: scale(1.2);
-            animation: heartbeat 0.6s ease-in-out;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1.2); }
-            50% { transform: scale(1.4); }
-        }
-
-        .btn-adopt-heart .bi-heart {
-            color: #ffaaa5;
-        }
-
-        .btn-adopt-heart:hover .bi-heart {
-            color: white;
+        .empty-state-icon {
+            font-size: 4rem;
+            color: #d1d5db;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
 <body>
-<!-- 导航栏（和首页一致） -->
+<!-- 导航栏 -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="${pageContext.request.contextPath}/">
@@ -348,7 +208,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/">首页</a></li>
-                <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/add.jsp">发布信息</a></li>
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/search.jsp">寻找宠物</a></li>
                 <c:choose>
@@ -359,7 +219,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-pets">
-                                    <i class="bi bi-list-ul me-2"></i>个人中心</a></li>
+                                    <i class="bi bi-list-ul me-2"></i>我的发布</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/logout">退出登录</a></li>
                             </ul>
@@ -385,76 +245,36 @@
             </div>
         </c:if>
 
+        <!-- 错误提示 -->
+        <c:if test="${not empty param.error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>${param.error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
+
         <!-- 页面标题和操作按钮 -->
         <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
             <div>
                 <h1 class="page-title">
-                    <i class="bi bi-heart-fill text-danger me-2" style="font-size: 1.5rem;"></i>
-                    可领养宠物列表
+                    <i class="bi bi-list-ul text-primary me-2" style="font-size: 1.5rem;"></i>
+                    我的发布
                 </h1>
                 <p class="text-muted mb-0 mt-2">
                     <c:choose>
                         <c:when test="${not empty petList}">
-                            共找到 <strong>${petList.size()}</strong> 只可爱的毛孩子等待领养
+                            共发布了 <strong>${petList.size()}</strong> 条领养信息
                         </c:when>
                         <c:otherwise>
-                            暂无待领养的宠物
+                            您还没有发布任何领养信息
                         </c:otherwise>
                     </c:choose>
                 </p>
             </div>
             <a href="${pageContext.request.contextPath}/add.jsp" class="btn btn-primary btn-action">
-                <i class="bi bi-plus-circle me-2"></i>新增可领养宠物
+                <i class="bi bi-plus-circle me-2"></i>发布新信息
             </a>
         </div>
-
-        <!-- 筛选栏 -->
-        <c:if test="${not empty petList}">
-            <div class="filter-card">
-                <h5 class="mb-3 fw-semibold">
-                    <i class="bi bi-funnel me-2"></i>筛选条件
-                </h5>
-                <form id="filterForm" class="row g-3" method="get" action="${pageContext.request.contextPath}/pet/list">
-                    <div class="col-md-3">
-                        <label class="form-label">宠物类型</label>
-                        <select name="type" class="form-select">
-                            <option value="">全部类型</option>
-                            <option value="猫" ${param.type == '猫' ? 'selected' : ''}>🐱 猫</option>
-                            <option value="狗" ${param.type == '狗' ? 'selected' : ''}>🐶 狗</option>
-                            <option value="其他" ${param.type == '其他' ? 'selected' : ''}>其他</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">性别</label>
-                        <select name="gender" class="form-select">
-                            <option value="">不限性别</option>
-                            <option value="公" ${param.gender == '公' ? 'selected' : ''}>♂ 公</option>
-                            <option value="母" ${param.gender == '母' ? 'selected' : ''}>♀ 母</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">年龄范围</label>
-                        <select name="ageRange" class="form-select" onchange="setAgeParams(this)">
-                            <option value="">不限年龄</option>
-                            <option value="0-1" ${param.ageRange == '0-1' ? 'selected' : ''}>1岁以下</option>
-                            <option value="1-3" ${param.ageRange == '1-3' ? 'selected' : ''}>1-3岁</option>
-                            <option value="3+" ${param.ageRange == '3+' ? 'selected' : ''}>3岁以上</option>
-                        </select>
-                        <!-- 隐藏域：传递minAge和maxAge给后端 -->
-                        <input type="hidden" id="minAge" name="minAge" value="${param.minAge}">
-                        <input type="hidden" id="maxAge" name="maxAge" value="${param.maxAge}">
-                    </div>
-                    <div class="col-md-3 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary btn-action flex-grow-1">
-                            <i class="bi bi-search me-2"></i>筛选
-                        </button>
-                        <a href="${pageContext.request.contextPath}/pet/list" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-clockwise"></i>
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </c:if>
 
         <!-- 宠物列表卡片 -->
         <c:choose>
@@ -516,27 +336,22 @@
                                     <p class="pet-description">${pet.description}</p>
                                 </div>
                                 <div class="card-footer">
-                                    <div class="d-flex gap-2">
+                                    <div class="d-flex flex-column gap-2">
                                         <a href="${pageContext.request.contextPath}/pet/detail?id=${pet.id}"
-                                           class="btn btn-sm btn-outline-primary btn-action flex-grow-1">
+                                           class="btn btn-sm btn-outline-primary btn-action">
                                             <i class="bi bi-info-circle me-1"></i>查看详情
                                         </a>
-                                        <c:choose>
-                                            <c:when test="${not empty sessionScope.userId}">
-                                                <a href="${pageContext.request.contextPath}/pet/adopt/form?petId=${pet.id}"
-                                                   class="btn-adopt-heart"
-                                                   title="申请领养">
-                                                    <i class="bi bi-heart-fill"></i>
-                                                </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <a href="${pageContext.request.contextPath}/login.jsp?redirect=${pageContext.request.contextPath}/pet/adopt/form?petId=${pet.id}"
-                                                   class="btn-adopt-heart"
-                                                   title="申请领养（需登录）">
-                                                    <i class="bi bi-heart"></i>
-                                                </a>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <div class="d-flex gap-2">
+                                            <a href="${pageContext.request.contextPath}/user/pet/edit?id=${pet.id}"
+                                               class="btn btn-sm btn-primary btn-action flex-grow-1">
+                                                <i class="bi bi-pencil me-1"></i>编辑
+                                            </a>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-danger btn-action"
+                                                    onclick="confirmDelete(${pet.id}, '${pet.name}')">
+                                                <i class="bi bi-trash me-1"></i>删除
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -550,10 +365,10 @@
                     <div class="empty-state-icon">
                         <i class="bi bi-paw"></i>
                     </div>
-                    <h4>暂无可领养宠物</h4>
-                    <p>目前还没有待领养的毛孩子，快来添加第一个吧！</p>
+                    <h4>还没有发布任何信息</h4>
+                    <p>快来发布第一条领养信息吧！</p>
                     <a href="${pageContext.request.contextPath}/add.jsp" class="btn btn-primary btn-action">
-                        <i class="bi bi-plus-circle me-2"></i>新增宠物信息
+                        <i class="bi bi-plus-circle me-2"></i>发布信息
                     </a>
                 </div>
             </c:otherwise>
@@ -604,61 +419,25 @@
 <!-- 引入 Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // 年龄范围选择：自动设置minAge和maxAge隐藏域的值
-    function setAgeParams(select) {
-        const minAgeInput = document.getElementById('minAge');
-        const maxAgeInput = document.getElementById('maxAge');
-
-        switch(select.value) {
-            case '0-1':
-                minAgeInput.value = 0;
-                maxAgeInput.value = 1;
-                break;
-            case '1-3':
-                minAgeInput.value = 1;
-                maxAgeInput.value = 3;
-                break;
-            case '3+':
-                minAgeInput.value = 3;
-                maxAgeInput.value = 99; // 设为超大值代表3岁以上
-                break;
-            default:
-                minAgeInput.value = '';
-                maxAgeInput.value = '';
-                break;
+    // 确认删除
+    function confirmDelete(petId, petName) {
+        if (confirm('确定要删除 "' + petName + '" 的领养信息吗？删除后无法恢复！')) {
+            // 创建表单提交删除请求
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/user/pet/delete';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = petId;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
     }
-
-    // 页面加载时初始化年龄隐藏域（回显筛选状态）
-    document.addEventListener('DOMContentLoaded', function() {
-        const ageRangeSelect = document.querySelector('select[name="ageRange"]');
-        if (ageRangeSelect && ageRangeSelect.value) {
-            setAgeParams(ageRangeSelect);
-        }
-
-        // 图片加载失败处理
-        const images = document.querySelectorAll('.pet-card img');
-        images.forEach(img => {
-            img.addEventListener('error', function() {
-                this.src = 'https://via.placeholder.com/600x400/e5e7eb/9ca3af?text=暂无图片';
-                this.onerror = null; // 防止无限循环
-            });
-        });
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    });
 </script>
 </body>
 </html>
+

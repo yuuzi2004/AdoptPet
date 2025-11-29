@@ -1,10 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>发布信息 - 毛孩子领养平台</title>
+    <title>编辑信息 - 毛孩子领养平台</title>
     <!-- 引入 Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- 引入图标库 -->
@@ -308,9 +309,6 @@
                                 <i class="bi bi-person-circle me-1"></i>${sessionScope.username}
                             </a>
                             <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-pets">
-                                        <i class="bi bi-list-ul me-2"></i>个人中心</a></li>
-                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/logout">退出登录</a></li>
                             </ul>
                         </li>
@@ -331,7 +329,7 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card form-card">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0"><i class="bi bi-plus-circle me-2"></i>发布信息</h4>
+                        <h4 class="mb-0"><i class="bi bi-pencil me-2"></i>编辑信息</h4>
                     </div>
                     <div class="card-body">
                         <c:if test="${empty sessionScope.userId}">
@@ -383,8 +381,10 @@
                             </ul>
                         </div>
                         
-                        <!-- 表单：提交到 PetAddServlet（/pet/add） -->
-                        <form action="${pageContext.request.contextPath}/pet/add" method="post" id="petForm" enctype="multipart/form-data" novalidate>
+                        <!-- 表单：提交到 UserPetUpdateServlet（/user/pet/update） -->
+                        <form action="${pageContext.request.contextPath}/user/pet/update" method="post" id="petForm" enctype="multipart/form-data" novalidate>
+                            <!-- 隐藏字段：宠物ID -->
+                            <input type="hidden" name="id" value="${pet.id}">
                             <div class="row g-4">
                                 <!-- 基本信息区域 -->
                                 <div class="col-12">
@@ -408,6 +408,26 @@
                                                onchange="previewImage(this)">
                                         <small class="form-text text-muted">支持 JPG、PNG、GIF 格式，最大 5MB</small>
                                     </div>
+                                    <c:if test="${not empty pet.imagePath}">
+                                        <div class="mb-3">
+                                            <label class="form-label text-muted">当前图片</label>
+                                            <div>
+                                                <c:choose>
+                                                    <c:when test="${fn:startsWith(pet.imagePath, 'uploads/')}">
+                                                        <img src="${pageContext.request.contextPath}/uploads/${fn:substringAfter(pet.imagePath, 'uploads/')}"
+                                                             alt="当前图片"
+                                                             style="max-width: 200px; max-height: 200px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="${pageContext.request.contextPath}/${pet.imagePath}"
+                                                             alt="当前图片"
+                                                             style="max-width: 200px; max-height: 200px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                            <small class="form-text text-muted">上传新图片将替换当前图片</small>
+                                        </div>
+                                    </c:if>
                                     <div id="imagePreview" class="mt-3" style="display: none;">
                                         <img id="previewImg" src="" alt="预览" style="max-width: 300px; max-height: 300px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                                     </div>
@@ -426,7 +446,8 @@
                                            required 
                                            placeholder="请输入宠物的名字，如：小白、旺财等"
                                            minlength="1"
-                                           maxlength="20">
+                                           maxlength="20"
+                                           value="${pet.name}">
                                     <div class="invalid-feedback">请输入宠物名称（1-20个字符）</div>
                                 </div>
                                 
@@ -438,12 +459,12 @@
                                     </label>
                                     <select class="form-select" id="type" name="type" required>
                                         <option value="">请选择类型</option>
-                                        <option value="猫">🐱 猫</option>
-                                        <option value="狗">🐶 狗</option>
-                                        <option value="兔子">🐰 兔子</option>
-                                        <option value="仓鼠">🐹 仓鼠</option>
-                                        <option value="鸟">🐦 鸟</option>
-                                        <option value="其他">其他</option>
+                                        <option value="猫" ${pet.type == '猫' ? 'selected' : ''}>🐱 猫</option>
+                                        <option value="狗" ${pet.type == '狗' ? 'selected' : ''}>🐶 狗</option>
+                                        <option value="兔子" ${pet.type == '兔子' ? 'selected' : ''}>🐰 兔子</option>
+                                        <option value="仓鼠" ${pet.type == '仓鼠' ? 'selected' : ''}>🐹 仓鼠</option>
+                                        <option value="鸟" ${pet.type == '鸟' ? 'selected' : ''}>🐦 鸟</option>
+                                        <option value="其他" ${pet.type == '其他' ? 'selected' : ''}>其他</option>
                                     </select>
                                     <div class="invalid-feedback">请选择宠物类型</div>
                                 </div>
@@ -460,7 +481,8 @@
                                            required 
                                            min="0" 
                                            max="30"
-                                           placeholder="请输入年龄（岁）">
+                                           placeholder="请输入年龄（岁）"
+                                           value="${pet.age}">
                                     <div class="invalid-feedback">请输入有效的年龄（0-30岁）</div>
                                 </div>
                                 
@@ -472,13 +494,13 @@
                                     </label>
                                     <div class="d-flex gap-3">
                                         <div class="form-check flex-grow-1">
-                                            <input class="form-check-input" type="radio" name="gender" id="male" value="公" checked required>
+                                            <input class="form-check-input" type="radio" name="gender" id="male" value="公" ${pet.gender == '公' ? 'checked' : ''} required>
                                             <label class="form-check-label" for="male">
                                                 <i class="bi bi-gender-male me-1"></i>公
                                             </label>
                                         </div>
                                         <div class="form-check flex-grow-1">
-                                            <input class="form-check-input" type="radio" name="gender" id="female" value="母" required>
+                                            <input class="form-check-input" type="radio" name="gender" id="female" value="母" ${pet.gender == '母' ? 'checked' : ''} required>
                                             <label class="form-check-label" for="female">
                                                 <i class="bi bi-gender-female me-1"></i>母
                                             </label>
@@ -506,7 +528,7 @@
                                               required 
                                               placeholder="请详细描述宠物的性格、健康状况、生活习惯、特殊需求等信息，有助于提高被领养的成功率（至少30字）"
                                               minlength="30"
-                                              maxlength="500"></textarea>
+                                              maxlength="500">${pet.description}</textarea>
                                     <div class="char-count" id="charCount">
                                         <span id="currentCount">0</span> / 500 字
                                     </div>
@@ -516,13 +538,10 @@
                                 <div class="col-12 mt-4 pt-4 border-top">
                                     <div class="d-flex flex-column flex-md-row gap-3">
                                         <button type="submit" class="btn btn-primary btn-submit flex-grow-1" id="submitBtn">
-                                            <i class="bi bi-check-circle me-2"></i>提交信息
+                                            <i class="bi bi-check-circle me-2"></i>保存修改
                                         </button>
-                                        <button type="reset" class="btn btn-outline-secondary" onclick="resetForm()">
-                                            <i class="bi bi-arrow-counterclockwise me-2"></i>重置
-                                        </button>
-                                        <a href="${pageContext.request.contextPath}/pet/list" class="btn btn-outline-secondary">
-                                            <i class="bi bi-arrow-left me-2"></i>返回列表
+                                        <a href="${pageContext.request.contextPath}/user/my-pets" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-2"></i>返回个人中心
                                         </a>
                                     </div>
                                 </div>
@@ -580,6 +599,11 @@
     const description = document.getElementById('description');
     const charCount = document.getElementById('charCount');
     const currentCount = document.getElementById('currentCount');
+    
+    // 初始化字符计数
+    if (description && currentCount) {
+        currentCount.textContent = description.value.length;
+    }
     
     description.addEventListener('input', function() {
         const length = this.value.length;
@@ -670,7 +694,7 @@
         currentCount.textContent = '0';
         charCount.className = 'char-count';
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>提交信息';
+        submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>保存修改';
     }
     
     // 图片预览功能

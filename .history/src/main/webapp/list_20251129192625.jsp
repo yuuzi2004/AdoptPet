@@ -358,9 +358,6 @@
                                 <i class="bi bi-person-circle me-1"></i>${sessionScope.username}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-pets">
-                                    <i class="bi bi-list-ul me-2"></i>个人中心</a></li>
-                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/logout">退出登录</a></li>
                             </ul>
                         </li>

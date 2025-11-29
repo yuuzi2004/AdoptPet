@@ -43,29 +43,7 @@
 
         <div class="mb-3">
             <label class="form-label">当前图片</label><br>
-            <c:choose>
-                <c:when test="${not empty pet.imagePath}">
-                    <c:choose>
-                        <c:when test="${fn:startsWith(pet.imagePath, 'uploads/')}">
-                            <img src="${pageContext.request.contextPath}/uploads/${fn:substringAfter(pet.imagePath, 'uploads/')}" 
-                                 width="200" 
-                                 alt="${pet.name}"
-                                 onerror="this.src='https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片'">
-                        </c:when>
-                        <c:otherwise>
-                            <img src="${pageContext.request.contextPath}/${pet.imagePath}" 
-                                 width="200" 
-                                 alt="${pet.name}"
-                                 onerror="this.src='https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片'">
-                        </c:otherwise>
-                    </c:choose>
-                </c:when>
-                <c:otherwise>
-                    <img src="https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片" 
-                         width="200" 
-                         alt="暂无图片">
-                </c:otherwise>
-            </c:choose>
+            <img src="${pageContext.request.contextPath}/uploads/${pet.imagePath}" width="200" alt="${pet.name}">
         </div>
 
         <div class="mb-3">

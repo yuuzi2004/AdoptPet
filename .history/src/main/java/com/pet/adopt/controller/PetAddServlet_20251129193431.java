@@ -124,9 +124,8 @@ public class PetAddServlet extends HttpServlet {
                 return;
             }
 
-            // 7. 封装成 Pet 实体对象（包含用户ID）
-            Integer userId = (Integer) session.getAttribute("userId");
-            Pet pet = new Pet(name.trim(), type.trim(), age, gender.trim(), description.trim(), imagePath, userId);
+            // 7. 封装成 Pet 实体对象
+            Pet pet = new Pet(name.trim(), type.trim(), age, gender.trim(), description.trim(), imagePath);
 
             // 8. 调用 Service 层新增宠物
             boolean success = false;
