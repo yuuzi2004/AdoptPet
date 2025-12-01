@@ -27,4 +27,5 @@ public interface PetService {
     
     // 根据ID和用户ID查询宠物（用于权限验证）
     Pet findPetByIdAndUserId(Integer id, Integer userId);
+
 }

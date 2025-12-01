@@ -56,15 +56,13 @@ public class LoginFilter implements Filter {
         String contextPath = httpRequest.getContextPath();
         String path = requestURI.substring(contextPath.length());
 
-        // ========== 新增调试日志（关键） ==========
+        // ========== 调试日志（删除adminId相关打印） ==========
         System.out.println("===== 过滤器调试 =====");
         System.out.println("完整请求URI：" + requestURI);
         System.out.println("去除上下文后的路径：" + path);
         System.out.println("是否排除路径：" + isExcludedPath(path));
         System.out.println("管理员Session是否存在：" + (httpRequest.getSession(false) != null));
-        if (httpRequest.getSession(false) != null) {
-            System.out.println("Session中的adminId：" + httpRequest.getSession(false).getAttribute("adminId"));
-        }
+        // 已删除：Session中的adminId打印代码
         // =========================================
 
         // 修复1：统一路径格式（移除末尾斜杠，避免 /admin/ 和 /admin 不匹配）
@@ -84,7 +82,7 @@ public class LoginFilter implements Filter {
         // 1. 管理员路径验证（/admin/*）
         if (path.startsWith("/admin/")) {
             HttpSession session = httpRequest.getSession(false);
-            // 验证管理员登录状态（session存在且有adminId）
+            // 保持原有的adminId验证（不修改，避免影响管理员功能）
             boolean isAdminLogin = (session != null) && (session.getAttribute("adminId") != null);
 
             if (!isAdminLogin) {

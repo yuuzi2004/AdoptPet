@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -193,6 +194,17 @@
             color: #d1d5db;
             margin-bottom: 1.5rem;
         }
+
+        /* 寻宠信息专属样式 */
+        .search-pet-status-searching {
+            background-color: rgba(229, 62, 62, 0.2);
+            color: #e53e3e;
+        }
+
+        .search-pet-status-found {
+            background-color: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
     </style>
 </head>
 <body>
@@ -218,7 +230,7 @@
                                 <i class="bi bi-person-circle me-1"></i>${sessionScope.username}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-pets">
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/center">
                                     <i class="bi bi-list-ul me-2"></i>个人中心</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/logout">退出登录</a></li>
@@ -346,7 +358,7 @@
                                                class="btn btn-sm btn-primary btn-action flex-grow-1">
                                                 <i class="bi bi-pencil me-1"></i>编辑
                                             </a>
-                                            <button type="button" 
+                                            <button type="button"
                                                     class="btn btn-sm btn-danger btn-action"
                                                     onclick="confirmDelete(${pet.id}, '${pet.name}')">
                                                 <i class="bi bi-trash me-1"></i>删除
@@ -373,7 +385,8 @@
                 </div>
             </c:otherwise>
         </c:choose>
-        <!-- 新增：我的领养申请记录板块 -->
+
+        <!-- 我的领养申请记录板块 -->
         <div class="mt-5">
             <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                 <div>
@@ -481,6 +494,166 @@
                 </c:otherwise>
             </c:choose>
         </div>
+
+        <!-- 我的寻宠信息板块 -->
+        <div class="mt-5">
+            <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div>
+                    <h1 class="page-title">
+                        <i class="bi bi-search text-primary me-2" style="font-size: 1.5rem;"></i>
+                        我的寻宠信息
+                    </h1>
+                    <p class="text-muted mb-0 mt-2">
+                        <c:choose>
+                            <c:when test="${not empty myPetSearchList}">
+                                共发布了 <strong>${myPetSearchList.size()}</strong> 条寻宠信息
+                            </c:when>
+                            <c:otherwise>
+                                您还没有发布任何寻宠信息
+                            </c:otherwise>
+                        </c:choose>
+                    </p>
+                </div>
+                <!-- 发布寻宠信息按钮 -->
+                <a href="${pageContext.request.contextPath}/search.jsp" class="btn btn-primary btn-action">
+                    <i class="bi bi-plus-circle me-2"></i>发布寻宠信息
+                </a>
+            </div>
+
+            <!-- 寻宠信息列表 -->
+            <c:choose>
+                <c:when test="${not empty myPetSearchList}">
+                    <div class="row g-4 mt-3">
+                        <c:forEach items="${myPetSearchList}" var="search">
+                            <div class="col-12">
+                                <div class="pet-card">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-wrap gap-4">
+                                            <!-- 寻宠信息主内容 -->
+                                            <div class="flex-grow-1">
+                                                <h5 class="card-title">
+                                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                                    寻找：${search.name}
+                                                </h5>
+
+                                                <!-- 寻宠基础信息 -->
+                                                <div class="pet-info">
+                                                    <span class="pet-info-item">
+                                                        <i class="bi bi-paw"></i>
+                                                        类型：${search.type}
+                                                    </span>
+                                                    <span class="pet-info-item">
+                                                        <i class="bi bi-geo-alt"></i>
+                                                        丢失位置：${search.location}
+                                                    </span>
+                                                    <span class="pet-info-item">
+                                                        <i class="bi bi-clock"></i>
+                                                        丢失时间：<fmt:formatDate value="${search.lostTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                                    </span>
+                                                </div>
+
+                                                <!-- 寻宠描述 -->
+                                                <p class="mt-2">
+                                                    <strong>寻宠描述：</strong>
+                                                    <span class="text-muted">${search.description}</span>
+                                                </p>
+
+                                                <!-- 联系方式 -->
+                                                <p>
+                                                    <strong>联系电话：</strong>
+                                                    <span class="text-muted">${search.contact}</span>
+                                                </p>
+                                            </div>
+
+                                            <!-- 寻宠状态 -->
+                                            <div class="d-flex align-items-center">
+                                                <c:choose>
+                                                    <c:when test="${search.status == 'searching'}">
+                                                        <span class="badge-type search-pet-status-searching">
+                                                            <i class="bi bi-hourglass-half me-1"></i>寻找中
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${search.status == 'found'}">
+                                                        <span class="badge-type search-pet-status-found">
+                                                            <i class="bi bi-check-circle me-1"></i>已找回
+                                                        </span>
+                                                    </c:when>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+
+                                        <!-- 寻宠图片（如果有） -->
+                                        <c:if test="${not empty search.imagePath}">
+                                            <div class="mt-3">
+                                                <label class="text-muted small">寻宠照片：</label>
+                                                <div class="mt-1" style="max-width: 200px;">
+                                                    <c:choose>
+                                                        <c:when test="${fn:startsWith(search.imagePath, 'uploads/')}">
+                                                            <img src="${pageContext.request.contextPath}/uploads/${fn:substringAfter(search.imagePath, 'uploads/')}"
+                                                                 alt="${search.name}"
+                                                                 class="img-thumbnail"
+                                                                 style="border-radius: 8px;"
+                                                                 onerror="this.src='https://via.placeholder.com/200x150/a8e6cf/2d5016?text=暂无图片';">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="${pageContext.request.contextPath}/${search.imagePath}"
+                                                                 alt="${search.name}"
+                                                                 class="img-thumbnail"
+                                                                 style="border-radius: 8px;"
+                                                                 onerror="this.src='https://via.placeholder.com/200x150/a8e6cf/2d5016?text=暂无图片';">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+
+                                    <!-- 操作按钮 -->
+                                    <div class="card-footer">
+                                        <div class="d-flex gap-2">
+                                            <!-- 查看详情 -->
+                                            <a href="${pageContext.request.contextPath}/pet/search?detailId=${search.id}"
+                                               class="btn btn-sm btn-outline-primary btn-action">
+                                                <i class="bi bi-info-circle me-1"></i>查看详情
+                                            </a>
+
+                                            <!-- 标记找回 -->
+                                            <c:if test="${search.status == 'searching'}">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-success btn-action"
+                                                        onclick="confirmFound(${search.id}, '${search.name}')">
+                                                    <i class="bi bi-check-circle me-1"></i>标记找回
+                                                </button>
+                                            </c:if>
+
+                                            <!-- 删除寻宠信息 -->
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btn-action"
+                                                    onclick="confirmDeleteSearch(${search.id}, '${search.name}')">
+                                                <i class="bi bi-trash me-1"></i>删除
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <!-- 寻宠信息空状态 -->
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h4>还没有发布任何寻宠信息</h4>
+                        <p>快去发布寻宠信息，帮毛孩子回家吧！</p>
+                        <a href="${pageContext.request.contextPath}/search.jsp" class="btn btn-primary btn-action">
+                            <i class="bi bi-plus-circle me-2"></i>发布寻宠信息
+                        </a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </div>
 </section>
 
@@ -527,20 +700,57 @@
 <!-- 引入 Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // 确认删除
+    // 确认删除领养信息
     function confirmDelete(petId, petName) {
         if (confirm('确定要删除 "' + petName + '" 的领养信息吗？删除后无法恢复！')) {
-            // 创建表单提交删除请求
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '${pageContext.request.contextPath}/user/pet/delete';
-            
+
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'id';
             input.value = petId;
-            
+
             form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // 确认标记找回
+    function confirmFound(searchId, petName) {
+        if (confirm('确定要标记 "' + petName + '" 为已找回吗？')) {
+            // 实际项目中应替换为AJAX请求或表单提交
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/user/search/found';
+
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = searchId;
+
+            form.appendChild(idInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // 确认删除寻宠信息
+    function confirmDeleteSearch(searchId, petName) {
+        if (confirm('确定要删除 "' + petName + '" 的寻宠信息吗？删除后无法恢复！')) {
+            // 实际项目中应替换为AJAX请求或表单提交
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/user/search/delete';
+
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = searchId;
+
+            form.appendChild(idInput);
             document.body.appendChild(form);
             form.submit();
         }
@@ -548,4 +758,3 @@
 </script>
 </body>
 </html>
-
