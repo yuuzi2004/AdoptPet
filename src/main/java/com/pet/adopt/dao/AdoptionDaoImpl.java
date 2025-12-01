@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdoptionDaoImpl implements AdoptionDao {
-    
+
     @Override
     public boolean addApplication(AdoptionApplication application) {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        
+
         try {
             conn = JdbcUtils.getConnection();
             String sql = "INSERT INTO adoption_application (pet_id, user_id, reason, contact, status, create_time) VALUES (?, ?, ?, ?, ?, NOW())";
@@ -25,7 +25,7 @@ public class AdoptionDaoImpl implements AdoptionDao {
             pstmt.setString(3, application.getReason());
             pstmt.setString(4, application.getContact());
             pstmt.setString(5, application.getStatus());
-            
+
             int result = pstmt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
@@ -35,25 +35,25 @@ public class AdoptionDaoImpl implements AdoptionDao {
             JdbcUtils.close(conn, pstmt, null);
         }
     }
-    
+
     @Override
     public List<AdoptionApplication> findApplicationsByUserId(Integer userId) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List<AdoptionApplication> applications = new ArrayList<>();
-        
+
         try {
             conn = JdbcUtils.getConnection();
             String sql = "SELECT a.*, p.name as pet_name, p.type as pet_type, u.username " +
-                        "FROM adoption_application a " +
-                        "LEFT JOIN pet p ON a.pet_id = p.id " +
-                        "LEFT JOIN user u ON a.user_id = u.id " +
-                        "WHERE a.user_id = ? ORDER BY a.create_time DESC";
+                    "FROM adoption_application a " +
+                    "LEFT JOIN pet p ON a.pet_id = p.id " +
+                    "LEFT JOIN user u ON a.user_id = u.id " +
+                    "WHERE a.user_id = ? ORDER BY a.create_time DESC";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
             rs = pstmt.executeQuery();
-            
+
             while (rs.next()) {
                 applications.add(mapResultSetToApplication(rs));
             }
@@ -62,28 +62,28 @@ public class AdoptionDaoImpl implements AdoptionDao {
         } finally {
             JdbcUtils.close(conn, pstmt, rs);
         }
-        
+
         return applications;
     }
-    
+
     @Override
     public List<AdoptionApplication> findApplicationsByPetId(Integer petId) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List<AdoptionApplication> applications = new ArrayList<>();
-        
+
         try {
             conn = JdbcUtils.getConnection();
             String sql = "SELECT a.*, p.name as pet_name, p.type as pet_type, u.username " +
-                        "FROM adoption_application a " +
-                        "LEFT JOIN pet p ON a.pet_id = p.id " +
-                        "LEFT JOIN user u ON a.user_id = u.id " +
-                        "WHERE a.pet_id = ? ORDER BY a.create_time DESC";
+                    "FROM adoption_application a " +
+                    "LEFT JOIN pet p ON a.pet_id = p.id " +
+                    "LEFT JOIN user u ON a.user_id = u.id " +
+                    "WHERE a.pet_id = ? ORDER BY a.create_time DESC";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, petId);
             rs = pstmt.executeQuery();
-            
+
             while (rs.next()) {
                 applications.add(mapResultSetToApplication(rs));
             }
@@ -92,27 +92,27 @@ public class AdoptionDaoImpl implements AdoptionDao {
         } finally {
             JdbcUtils.close(conn, pstmt, rs);
         }
-        
+
         return applications;
     }
-    
+
     @Override
     public AdoptionApplication findApplicationById(Integer id) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        
+
         try {
             conn = JdbcUtils.getConnection();
             String sql = "SELECT a.*, p.name as pet_name, p.type as pet_type, u.username " +
-                        "FROM adoption_application a " +
-                        "LEFT JOIN pet p ON a.pet_id = p.id " +
-                        "LEFT JOIN user u ON a.user_id = u.id " +
-                        "WHERE a.id = ?";
+                    "FROM adoption_application a " +
+                    "LEFT JOIN pet p ON a.pet_id = p.id " +
+                    "LEFT JOIN user u ON a.user_id = u.id " +
+                    "WHERE a.id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
             rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 return mapResultSetToApplication(rs);
             }
@@ -121,16 +121,16 @@ public class AdoptionDaoImpl implements AdoptionDao {
         } finally {
             JdbcUtils.close(conn, pstmt, rs);
         }
-        
+
         return null;
     }
-    
+
     @Override
     public boolean hasUserApplied(Integer userId, Integer petId) {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        
+
         try {
             conn = JdbcUtils.getConnection();
             String sql = "SELECT COUNT(*) FROM adoption_application WHERE user_id = ? AND pet_id = ?";
@@ -138,7 +138,7 @@ public class AdoptionDaoImpl implements AdoptionDao {
             pstmt.setInt(1, userId);
             pstmt.setInt(2, petId);
             rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
@@ -147,10 +147,10 @@ public class AdoptionDaoImpl implements AdoptionDao {
         } finally {
             JdbcUtils.close(conn, pstmt, rs);
         }
-        
+
         return false;
     }
-    
+
     private AdoptionApplication mapResultSetToApplication(ResultSet rs) throws SQLException {
         AdoptionApplication application = new AdoptionApplication();
         application.setId(rs.getInt("id"));
@@ -159,17 +159,17 @@ public class AdoptionDaoImpl implements AdoptionDao {
         application.setReason(rs.getString("reason"));
         application.setContact(rs.getString("contact"));
         application.setStatus(rs.getString("status"));
-        
+
         Timestamp createTime = rs.getTimestamp("create_time");
         if (createTime != null) {
             application.setCreateTime(createTime.toLocalDateTime());
         }
-        
+
         Timestamp processTime = rs.getTimestamp("process_time");
         if (processTime != null) {
             application.setProcessTime(processTime.toLocalDateTime());
         }
-        
+
         // 设置关联对象
         if (rs.getString("pet_name") != null) {
             Pet pet = new Pet();
@@ -178,15 +178,32 @@ public class AdoptionDaoImpl implements AdoptionDao {
             pet.setType(rs.getString("pet_type"));
             application.setPet(pet);
         }
-        
+
         if (rs.getString("username") != null) {
             User user = new User();
             user.setId(rs.getInt("user_id"));
             user.setUsername(rs.getString("username"));
             application.setUser(user);
         }
-        
+
         return application;
     }
-}
 
+    // 实现根据申请ID和用户ID删除申请的方法
+    @Override
+    public int deleteByIdAndUserId(Integer applicationId, Integer userId) {
+        if (applicationId == null || applicationId <= 0 || userId == null || userId <= 0) {
+            return 0;
+        }
+        String sql = "DELETE FROM adoption_application WHERE id = ? AND user_id = ?";
+        try (Connection conn = JdbcUtils.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, applicationId);
+            pstmt.setInt(2, userId);
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+}

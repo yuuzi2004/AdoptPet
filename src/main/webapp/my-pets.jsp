@@ -2,6 +2,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<%-- 显示操作提示信息 --%>
+<c:if test="${not empty param.success}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${param.success}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</c:if>
+<c:if test="${not empty param.error}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${param.error}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</c:if>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -266,12 +280,23 @@
         </c:if>
 
         <!-- 页面标题和操作按钮 -->
-        <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+        <!-- 个人中心总标题 -->
+        <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
             <div>
                 <h1 class="page-title">
-                    <i class="bi bi-list-ul text-primary me-2" style="font-size: 1.5rem;"></i>
+                    <i class="bi bi-person-circle text-primary me-2" style="font-size: 1.5rem;"></i>
                     个人中心
                 </h1>
+            </div>
+        </div>
+
+        <!-- 我的发布领养信息子板块 -->
+        <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div>
+                <h2 class="page-title" style="font-size: 1.5rem; font-weight: 600;">
+                    <i class="bi bi-paw text-primary me-2"></i>
+                    我的发布领养信息
+                </h2>
                 <p class="text-muted mb-0 mt-2">
                     <c:choose>
                         <c:when test="${not empty petList}">
@@ -388,12 +413,12 @@
 
         <!-- 我的领养申请记录板块 -->
         <div class="mt-5">
-            <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+            <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mt-5">
                 <div>
-                    <h1 class="page-title">
-                        <i class="bi bi-file-earmark-check text-primary me-2" style="font-size: 1.5rem;"></i>
+                    <h2 class="page-title" style="font-size: 1.5rem; font-weight: 600;">
+                        <i class="bi bi-file-earmark-check text-primary me-2"></i>
                         我的领养申请记录
-                    </h1>
+                    </h2>
                     <p class="text-muted mb-0 mt-2">
                         <c:choose>
                             <c:when test="${not empty applicationList}">
@@ -419,7 +444,7 @@
                                             <!-- 宠物信息 -->
                                             <div class="flex-grow-1">
                                                 <h5 class="card-title">
-                                                    <i class="bi bi-heart-fill text-danger me-1"></i>
+                                                    <i class="bi bi-paw text-primary me-1"></i>
                                                     申请领养：${application.petName}
                                                 </h5>
                                                 <div class="pet-info">
@@ -469,10 +494,17 @@
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="${pageContext.request.contextPath}/pet/detail?id=${application.petId}"
-                                           class="btn btn-sm btn-outline-primary btn-action">
-                                            <i class="bi bi-info-circle me-1"></i>查看宠物详情
-                                        </a>
+                                        <div class="d-flex gap-2">
+                                            <a href="${pageContext.request.contextPath}/pet/detail?id=${application.petId}"
+                                               class="btn btn-sm btn-outline-primary btn-action">
+                                                <i class="bi bi-info-circle me-1"></i>查看宠物详情
+                                            </a>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btn-action"
+                                                    onclick="confirmDeleteApplication(${application.id}, '${application.petName}')">
+                                                <i class="bi bi-trash me-1"></i>删除申请
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -701,16 +733,20 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // 确认删除领养信息
-    function confirmDelete(petId, petName) {
-        if (confirm('确定要删除 "' + petName + '" 的领养信息吗？删除后无法恢复！')) {
+    // 找到这段代码
+    function confirmDeleteApplication(applicationId, petName) {
+        if (confirm('确定要删除 "' + petName + '" 的领养申请吗？删除后无法恢复！')) {
+            // 动态创建表单提交删除请求
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '${pageContext.request.contextPath}/user/pet/delete';
+            // 原路径：form.action = '${pageContext.request.contextPath}/user/adoption/delete';
+            // 修改为正确的Servlet路径
+            form.action = '${pageContext.request.contextPath}/adoption/delete';
 
             const input = document.createElement('input');
             input.type = 'hidden';
-            input.name = 'id';
-            input.value = petId;
+            input.name = 'applicationId'; // 注意：参数名需改为applicationId，与Servlet中接收的参数一致
+            input.value = applicationId;
 
             form.appendChild(input);
             document.body.appendChild(form);
@@ -751,6 +787,24 @@
             idInput.value = searchId;
 
             form.appendChild(idInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+    // 确认删除领养申请
+    function confirmDeleteApplication(applicationId, petName) {
+        if (confirm('确定要删除 "' + petName + '" 的领养申请吗？删除后无法恢复！')) {
+            // 动态创建表单提交删除请求
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/user/adoption/delete'; // 后端处理删除的Servlet路径
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id'; // 参数名，对应领养申请ID
+            input.value = applicationId;
+
+            form.appendChild(input);
             document.body.appendChild(form);
             form.submit();
         }

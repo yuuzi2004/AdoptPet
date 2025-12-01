@@ -23,12 +23,12 @@ import java.io.IOException;
 public class AdoptionServlet extends HttpServlet {
     private AdoptionService adoptionService = new AdoptionServiceImpl();
     private PetService petService = new PetServiceImpl();
-    
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String pathInfo = req.getPathInfo();
-        
+
         // 如果是 /pet/adopt/form，显示申请表单
         if (pathInfo != null && pathInfo.equals("/form")) {
             String petIdStr = req.getParameter("petId");
@@ -37,17 +37,17 @@ public class AdoptionServlet extends HttpServlet {
                 req.getRequestDispatcher("/pet/list").forward(req, resp);
                 return;
             }
-            
+
             try {
                 Integer petId = Integer.parseInt(petIdStr);
                 Pet pet = petService.findPetById(petId);
-                
+
                 if (pet == null) {
                     req.setAttribute("error", "宠物不存在！");
                     req.getRequestDispatcher("/pet/list").forward(req, resp);
                     return;
                 }
-                
+
                 // 检查用户是否已经申请过
                 HttpSession session = req.getSession();
                 Integer userId = (Integer) session.getAttribute("userId");
@@ -57,7 +57,7 @@ public class AdoptionServlet extends HttpServlet {
                     req.getRequestDispatcher("/adopt.jsp").forward(req, resp);
                     return;
                 }
-                
+
                 req.setAttribute("pet", pet);
                 req.getRequestDispatcher("/adopt.jsp").forward(req, resp);
             } catch (NumberFormatException e) {
@@ -69,29 +69,29 @@ public class AdoptionServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/pet/list");
         }
     }
-    
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        
+
         HttpSession session = req.getSession();
         Integer userId = (Integer) session.getAttribute("userId");
-        
+
         if (userId == null) {
             req.setAttribute("error", "请先登录！");
             req.getRequestDispatcher("/login.jsp").forward(req, resp);
             return;
         }
-        
+
         String petIdStr = req.getParameter("petId");
         String reason = req.getParameter("reason");
         String contact = req.getParameter("contact");
-        
+
         // 验证参数
-        if (petIdStr == null || petIdStr.isEmpty() || 
-            reason == null || reason.trim().isEmpty() ||
-            contact == null || contact.trim().isEmpty()) {
+        if (petIdStr == null || petIdStr.isEmpty() ||
+                reason == null || reason.trim().isEmpty() ||
+                contact == null || contact.trim().isEmpty()) {
             req.setAttribute("error", "请填写完整的申请信息！");
             if (petIdStr != null && !petIdStr.isEmpty()) {
                 try {
@@ -105,10 +105,10 @@ public class AdoptionServlet extends HttpServlet {
             req.getRequestDispatcher("/adopt.jsp").forward(req, resp);
             return;
         }
-        
+
         try {
             Integer petId = Integer.parseInt(petIdStr);
-            
+
             // 检查是否已经申请过
             if (adoptionService.hasUserApplied(userId, petId)) {
                 req.setAttribute("error", "您已经申请过领养该宠物了！");
@@ -117,15 +117,15 @@ public class AdoptionServlet extends HttpServlet {
                 req.getRequestDispatcher("/adopt.jsp").forward(req, resp);
                 return;
             }
-            
+
             // 创建申请对象
             AdoptionApplication application = new AdoptionApplication(
-                petId, userId, reason.trim(), contact.trim()
+                    petId, userId, reason.trim(), contact.trim()
             );
-            
+
             // 提交申请
             boolean success = adoptionService.submitApplication(application);
-            
+
             if (success) {
                 // 申请成功，重定向到成功页面或列表页
                 resp.sendRedirect(req.getContextPath() + "/pet/adopt/success?petId=" + petId);
@@ -141,4 +141,3 @@ public class AdoptionServlet extends HttpServlet {
         }
     }
 }
-

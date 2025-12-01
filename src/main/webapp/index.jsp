@@ -384,7 +384,7 @@
                     <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/">首页</a></li>
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/add.jsp">发布信息</a></li>
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/search.jsp">寻找宠物</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/search">寻找宠物</a></li>
                     <c:choose>
                         <c:when test="${not empty sessionScope.userId}">
                             <li class="nav-item dropdown">
@@ -392,7 +392,7 @@
                                     <i class="bi bi-person-circle me-1"></i>${sessionScope.username}
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/center">
+                                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/my-pets">
                                         <i class="bi bi-list-ul me-2"></i>个人中心</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="${pageContext.request.contextPath}/user/logout">退出登录</a></li>
@@ -407,11 +407,6 @@
                             </li>
                         </c:otherwise>
                     </c:choose>
-<%--                    <li class="nav-item">--%>
-<%--                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/login.jsp">--%>
-<%--                            <i class="bi bi-shield-lock me-1"></i>管理员--%>
-<%--                        </a>--%>
-<%--                    </li>--%>
                 </ul>
             </div>
         </div>

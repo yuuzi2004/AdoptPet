@@ -184,6 +184,7 @@ public class PetSearchServlet extends HttpServlet {
     }
 
     // ========== 私有方法：新增寻宠信息到数据库 ==========
+    // ========== 私有方法：新增寻宠信息到数据库 ==========
     private boolean addPetSearch(String name, String type, String location, LocalDateTime lostTime,
                                  String description, String contact, String imagePath, Integer userId) {
         Connection conn = null;
@@ -191,8 +192,9 @@ public class PetSearchServlet extends HttpServlet {
 
         try {
             conn = JdbcUtils.getConnection();
-            String sql = "INSERT INTO pet_search (name, type, location, lost_time, description, contact, user_id, status, create_time) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, 'searching', NOW())";
+            // 补充 image_path 字段的插入（与数据库表结构匹配）
+            String sql = "INSERT INTO pet_search (name, type, location, lost_time, description, contact, user_id, status, create_time, image_path) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, 'searching', NOW(), ?)";
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, name);
@@ -202,14 +204,16 @@ public class PetSearchServlet extends HttpServlet {
             pstmt.setString(5, description);
             pstmt.setString(6, contact);
             pstmt.setInt(7, userId);
+            pstmt.setString(8, imagePath); // 新增：存储图片路径
 
             int result = pstmt.executeUpdate();
-            System.out.println("发布寻宠结果：" + (result > 0 ? "成功" : "失败") + "，名称：" + name);
+            System.out.println("发布寻宠结果：" + (result > 0 ? "成功" : "失败") +
+                    "，名称：" + name + "，用户ID：" + userId + "，图片路径：" + imagePath);
             return result > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("发布失败：" + e.getMessage());
+            System.err.println("发布失败：" + e.getMessage() + "，用户ID：" + userId);
             return false;
         } finally {
             JdbcUtils.close(conn, pstmt, null);
@@ -217,6 +221,7 @@ public class PetSearchServlet extends HttpServlet {
     }
 
     // ========== 私有方法：查询所有寻宠信息（全局列表） ==========
+// ========== 私有方法：查询所有寻宠信息（全局列表） ==========
     private List<PetSearch> findAllPetSearches() {
         List<PetSearch> searchList = new ArrayList<>();
         Connection conn = null;
@@ -225,8 +230,9 @@ public class PetSearchServlet extends HttpServlet {
 
         try {
             conn = JdbcUtils.getConnection();
-            String sql = "SELECT id, name, type, location, lost_time, description, contact, user_id " +
-                    "FROM pet_search ORDER BY create_time DESC";
+            // 补充查询 image_path、status、create_time 字段，增加状态过滤
+            String sql = "SELECT id, name, type, location, lost_time, description, contact, user_id, image_path, status, create_time " +
+                    "FROM pet_search WHERE status = 'searching' ORDER BY create_time DESC";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
@@ -245,10 +251,13 @@ public class PetSearchServlet extends HttpServlet {
                 search.setDescription(rs.getString("description"));
                 search.setContact(rs.getString("contact"));
                 search.setUserId(rs.getInt("user_id"));
+                search.setImagePath(rs.getString("image_path")); // 新增：读取图片路径
+                search.setStatus(rs.getString("status")); // 新增：读取状态
+                search.setCreateTime(rs.getTimestamp("create_time").toLocalDateTime()); // 新增：创建时间
 
                 searchList.add(search);
             }
-            System.out.println("全局寻宠列表数量：" + searchList.size());
+            System.out.println("全局寻宠列表数量（修正后）：" + searchList.size());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -261,6 +270,7 @@ public class PetSearchServlet extends HttpServlet {
     }
 
     // ========== 私有方法：根据用户ID查询个人寻宠信息 ==========
+    // ========== 私有方法：根据用户ID查询个人寻宠信息 ==========
     private List<PetSearch> findPetSearchesByUserId(Integer userId) {
         List<PetSearch> myList = new ArrayList<>();
         Connection conn = null;
@@ -269,8 +279,10 @@ public class PetSearchServlet extends HttpServlet {
 
         try {
             conn = JdbcUtils.getConnection();
-            String sql = "SELECT id, name, type, location, lost_time, description, contact " +
-                    "FROM pet_search WHERE user_id = ? ORDER BY create_time DESC";
+            // 1. 补充查询 image_path 和 status 字段
+            // 2. 增加 status 条件（只显示未找到的记录，与业务逻辑一致）
+            String sql = "SELECT id, name, type, location, lost_time, description, contact, image_path, status " +
+                    "FROM pet_search WHERE user_id = ? AND status = 'searching' ORDER BY create_time DESC";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
             rs = pstmt.executeQuery();
@@ -290,9 +302,12 @@ public class PetSearchServlet extends HttpServlet {
                 search.setDescription(rs.getString("description"));
                 search.setContact(rs.getString("contact"));
                 search.setUserId(userId);
+                search.setImagePath(rs.getString("image_path")); // 新增：读取图片路径
+                search.setStatus(rs.getString("status")); // 新增：读取状态
 
                 myList.add(search);
             }
+            System.out.println("个人寻宠列表数量（修正后）：" + myList.size() + "，用户ID：" + userId);
 
         } catch (SQLException e) {
             e.printStackTrace();

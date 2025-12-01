@@ -136,4 +136,31 @@ public class AdoptionServiceImpl implements AdoptionService {
             JdbcUtils.close(conn, pstmt, null);
         }
     }
+
+    // ========== 新增：实现根据申请ID和用户ID删除申请 ==========
+    // 新增：根据申请ID和用户ID删除申请（确保用户只能删除自己的申请）
+    @Override
+    public int deleteByIdAndUserId(Integer applicationId, Integer userId) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = JdbcUtils.getConnection();
+            // 仅允许删除当前用户的申请（通过 WHERE 条件限制 user_id = ?）
+            String sql = "DELETE FROM adoption_application " +
+                    "WHERE id = ? AND user_id = ?";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, applicationId); // 申请ID
+            pstmt.setInt(2, userId);        // 用户ID（权限控制）
+
+            // 执行删除，返回受影响的行数（1表示成功，0表示未找到或无权限）
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0; // 异常时返回0表示失败
+        } finally {
+            JdbcUtils.close(conn, pstmt, null);
+        }
+    }
 }
