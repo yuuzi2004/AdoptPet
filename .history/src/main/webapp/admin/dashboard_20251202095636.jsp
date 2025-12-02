@@ -331,7 +331,7 @@
                 </div>
             </div>
         </c:when>
-        <c:when test="${not empty userList && (pageContext.request.requestURI.contains('/admin/user/list') || pageContext.request.servletPath.contains('/admin/user/list'))}">
+        <c:when test="${not empty userList && pageContext.request.requestURI.contains('/admin/user/list')}">
             <!-- 用户管理页面：显示所有用户 -->
             <div class="content-card">
                 <h5 class="mb-4"><i class="bi bi-people me-2"></i>用户管理</h5>
@@ -426,10 +426,7 @@
     </c:choose>
 
     <!-- 待处理领养申请（仅在仪表盘显示） -->
-    <c:set var="isDashboard" value="${pageContext.request.requestURI.contains('/admin/dashboard') || pageContext.request.servletPath.contains('/admin/dashboard')}" />
-    <c:set var="isPetList" value="${pageContext.request.requestURI.contains('/admin/pet/list') || pageContext.request.servletPath.contains('/admin/pet/list')}" />
-    <c:set var="isUserList" value="${pageContext.request.requestURI.contains('/admin/user/list') || pageContext.request.servletPath.contains('/admin/user/list')}" />
-    <c:if test="${isDashboard || (!isPetList && !isUserList)}">
+    <c:if test="${pageContext.request.requestURI.contains('/admin/dashboard') || !pageContext.request.requestURI.contains('/admin/pet/list') && !pageContext.request.requestURI.contains('/admin/user/list')}">
     <div class="content-card mt-4">
         <h5 class="mb-4"><i class="bi bi-file-earmark-text me-2"></i>待处理领养申请（快捷审核）</h5>
         <div class="table-responsive">

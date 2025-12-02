@@ -3,6 +3,19 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%-- 显示操作提示信息 --%>
+<c:if test="${not empty param.success}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${param.success}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</c:if>
+<c:if test="${not empty param.error}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${param.error}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</c:if>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -230,12 +243,12 @@
         }
 
         /* 寻宠信息专属样式 */
-        .record-status.search-pet-status-searching {
+        .search-pet-status-searching {
             background-color: rgba(229, 62, 62, 0.2);
             color: #e53e3e;
         }
 
-        .record-status.search-pet-status-found {
+        .search-pet-status-found {
             background-color: rgba(72, 187, 120, 0.2);
             color: #48bb78;
         }
@@ -314,7 +327,7 @@
         <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
             <div>
                 <h2 class="page-title" style="font-size: 1.5rem; font-weight: 600;">
-                    <i class="bi bi-sun text-primary me-2" style="font-size: 1.5rem;"></i>
+                    <i class="bi bi-journal-heart text-primary me-2" style="font-size: 1.5rem;"></i>
                     我的发布领养信息
                 </h2>
                 <p class="text-muted mb-0 mt-2">
@@ -405,9 +418,7 @@
                                             </a>
                                             <button type="button"
                                                     class="btn btn-sm btn-danger btn-action"
-                                                    data-pet-id="${pet.id}"
-                                                    data-pet-name="${fn:escapeXml(pet.name)}"
-                                                    onclick="handlePetDelete(this)">
+                                                    onclick="confirmDelete(${pet.id}, '${pet.name}')">
                                                 <i class="bi bi-trash me-1"></i>删除
                                             </button>
                                         </div>
@@ -480,17 +491,7 @@
                                             </span>
                                                     <span class="pet-info-item">
                                                 <i class="bi bi-clock"></i>
-                                                申请时间：<c:choose>
-                                                    <c:when test="${not empty application.createTime}">
-                                                        <%
-                                                            com.pet.adopt.entity.AdoptionApplication appItem = (com.pet.adopt.entity.AdoptionApplication) pageContext.getAttribute("application");
-                                                            if (appItem != null && appItem.getCreateTime() != null) {
-                                                                out.print(appItem.getCreateTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                                                            }
-                                                        %>
-                                                    </c:when>
-                                                    <c:otherwise>未知</c:otherwise>
-                                                </c:choose>
+                                                申请时间：${application.createTime}
                                             </span>
                                                 </div>
                                                 <p class="mt-2">
@@ -503,40 +504,39 @@
                                                 </p>
                                             </div>
 
+                                            <!-- 审核状态 -->
+                                            <div class="d-flex align-items-center">
+                                                <c:choose>
+                                                    <c:when test="${application.status == 'pending'}">
+                                                <span class="badge-type bg-warning text-dark">
+                                                    <i class="bi bi-hourglass-half me-1"></i>${application.statusCN}
+                                                </span>
+                                                    </c:when>
+                                                    <c:when test="${application.status == 'approved'}">
+                                                <span class="badge-type bg-success text-white">
+                                                    <i class="bi bi-check-circle me-1"></i>${application.statusCN}
+                                                </span>
+                                                    </c:when>
+                                                    <c:when test="${application.status == 'rejected'}">
+                                                <span class="badge-type bg-danger text-white">
+                                                    <i class="bi bi-x-circle me-1"></i>${application.statusCN}
+                                                </span>
+                                                    </c:when>
+                                                </c:choose>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="card-footer">
-                                        <div class="record-footer">
-                                            <div class="d-flex flex-wrap gap-2">
+                                        <div class="d-flex gap-2">
                                             <a href="${pageContext.request.contextPath}/pet/detail?id=${application.petId}"
                                                class="btn btn-sm btn-outline-primary btn-action">
                                                 <i class="bi bi-info-circle me-1"></i>查看宠物详情
                                             </a>
                                             <button type="button"
                                                     class="btn btn-sm btn-danger btn-action"
-                                                        data-application-id="${application.id}"
-                                                        data-pet-name="${fn:escapeXml(application.petName)}"
-                                                        onclick="handleApplicationDelete(this)">
+                                                    onclick="confirmDeleteApplication(${application.id}, '${application.petName}')">
                                                 <i class="bi bi-trash me-1"></i>删除申请
                                             </button>
-                                            </div>
-                                            <c:choose>
-                                                <c:when test="${application.status == 'pending'}">
-                                                    <span class="record-status pending">
-                                                        <i class="bi bi-hourglass-half"></i>${application.statusCN}
-                                                    </span>
-                                                </c:when>
-                                                <c:when test="${application.status == 'approved'}">
-                                                    <span class="record-status approved">
-                                                        <i class="bi bi-check-circle"></i>${application.statusCN}
-                                                    </span>
-                                                </c:when>
-                                                <c:when test="${application.status == 'rejected'}">
-                                                    <span class="record-status rejected">
-                                                        <i class="bi bi-x-circle"></i>${application.statusCN}
-                                                    </span>
-                                                </c:when>
-                                            </c:choose>
                                         </div>
                                     </div>
                                 </div>
@@ -613,17 +613,7 @@
                                                     </span>
                                                     <span class="pet-info-item">
                                                         <i class="bi bi-clock"></i>
-                                                        丢失时间：<c:choose>
-                                                            <c:when test="${not empty search.lostTime}">
-                                                                <%
-                                                                    com.pet.adopt.entity.PetSearch searchItem = (com.pet.adopt.entity.PetSearch) pageContext.getAttribute("search");
-                                                                    if (searchItem != null && searchItem.getLostTime() != null) {
-                                                                        out.print(searchItem.getLostTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                                                                    }
-                                                                %>
-                                                            </c:when>
-                                                            <c:otherwise>未知</c:otherwise>
-                                                        </c:choose>
+                                                        丢失时间：<fmt:formatDate value="${search.lostTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                                     </span>
                                                 </div>
 
@@ -638,6 +628,22 @@
                                                     <strong>联系电话：</strong>
                                                     <span class="text-muted">${search.contact}</span>
                                                 </p>
+                                            </div>
+
+                                            <!-- 寻宠状态 -->
+                                            <div class="d-flex align-items-center">
+                                                <c:choose>
+                                                    <c:when test="${search.status == 'searching'}">
+                                                        <span class="badge-type search-pet-status-searching">
+                                                            <i class="bi bi-hourglass-half me-1"></i>寻找中
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${search.status == 'found'}">
+                                                        <span class="badge-type search-pet-status-found">
+                                                            <i class="bi bi-check-circle me-1"></i>已找回
+                                                        </span>
+                                                    </c:when>
+                                                </c:choose>
                                             </div>
                                         </div>
 
@@ -669,47 +675,28 @@
 
                                     <!-- 操作按钮 -->
                                     <div class="card-footer">
-                                        <div class="record-footer">
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <!-- 查看详情 -->
-                                                <a href="${pageContext.request.contextPath}/pet/search?detailId=${search.id}"
-                                                   class="btn btn-sm btn-outline-primary btn-action">
-                                                    <i class="bi bi-info-circle me-1"></i>查看详情
-                                                </a>
+                                        <div class="d-flex gap-2">
+                                            <!-- 查看详情 -->
+                                            <a href="${pageContext.request.contextPath}/pet/search?detailId=${search.id}"
+                                               class="btn btn-sm btn-outline-primary btn-action">
+                                                <i class="bi bi-info-circle me-1"></i>查看详情
+                                            </a>
 
-                                                <!-- 标记找回 -->
-                                                <c:if test="${search.status == 'searching'}">
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-success btn-action"
-                                                            data-search-id="${search.id}"
-                                                            data-search-name="${fn:escapeXml(search.name)}"
-                                                            onclick="handleSearchFound(this)">
-                                                        <i class="bi bi-check-circle me-1"></i>标记找回
-                                                    </button>
-                                                </c:if>
-
-                                                <!-- 删除寻宠信息 -->
+                                            <!-- 标记找回 -->
+                                            <c:if test="${search.status == 'searching'}">
                                                 <button type="button"
-                                                        class="btn btn-sm btn-danger btn-action"
-                                                        data-search-id="${search.id}"
-                                                        data-search-name="${fn:escapeXml(search.name)}"
-                                                        onclick="handleSearchDelete(this)">
-                                                    <i class="bi bi-trash me-1"></i>删除
+                                                        class="btn btn-sm btn-success btn-action"
+                                                        onclick="confirmFound(${search.id}, '${search.name}')">
+                                                    <i class="bi bi-check-circle me-1"></i>标记找回
                                                 </button>
-                                            </div>
-                                            <!-- 寻宠状态 -->
-                                            <c:choose>
-                                                <c:when test="${search.status == 'searching'}">
-                                                    <span class="record-status search-pet-status-searching">
-                                                        <i class="bi bi-hourglass-half"></i>寻找中
-                                                    </span>
-                                                </c:when>
-                                                <c:when test="${search.status == 'found'}">
-                                                    <span class="record-status search-pet-status-found">
-                                                        <i class="bi bi-check-circle"></i>已找回
-                                                    </span>
-                                                </c:when>
-                                            </c:choose>
+                                            </c:if>
+
+                                            <!-- 删除寻宠信息 -->
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btn-action"
+                                                    onclick="confirmDeleteSearch(${search.id}, '${search.name}')">
+                                                <i class="bi bi-trash me-1"></i>删除
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -778,58 +765,26 @@
 <!-- 引入 Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function handlePetDelete(button) {
-        confirmDelete(button.dataset.petId, button.dataset.petName);
-    }
-
-    function handleApplicationDelete(button) {
-        confirmDeleteApplication(button.dataset.applicationId, button.dataset.petName);
-    }
-
-    function handleSearchFound(button) {
-        confirmFound(button.dataset.searchId, button.dataset.searchName);
-    }
-
-    function handleSearchDelete(button) {
-        confirmDeleteSearch(button.dataset.searchId, button.dataset.searchName);
-    }
-
-    // 用户发布的领养信息删除
-    function confirmDelete(petId, petName) {
-        if (confirm('确定要删除 "' + petName + '" 的领养信息吗？删除后无法恢复！')) {
+    // 确认删除领养信息
+    // 找到这段代码
+    function confirmDeleteApplication(applicationId, petName) {
+        if (confirm('确定要删除 "' + petName + '" 的领养申请吗？删除后无法恢复！')) {
+            // 动态创建表单提交删除请求
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '${pageContext.request.contextPath}/user/pet/delete';
+            // 原路径：form.action = '${pageContext.request.contextPath}/user/adoption/delete';
+            // 修改为正确的Servlet路径
+            form.action = '${pageContext.request.contextPath}/adoption/delete';
 
-            const idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            idInput.value = petId;
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'applicationId'; // 注意：参数名需改为applicationId，与Servlet中接收的参数一致
+            input.value = applicationId;
 
-            form.appendChild(idInput);
+            form.appendChild(input);
             document.body.appendChild(form);
             form.submit();
         }
-    }
-
-    // 确认删除领养申请：使用浏览器原生确认框，删除后刷新个人页面
-    function confirmDeleteApplication(applicationId, petName) {
-        if (!confirm('确定要删除 \"' + petName + '\" 的领养申请吗？删除后无法恢复！')) {
-            return;
-        }
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '${pageContext.request.contextPath}/adoption/delete';
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'applicationId';
-        input.value = applicationId;
-
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit(); // 提交后由后端重定向回 /user/my-pets，页面自然刷新
     }
 
     // 确认标记找回
@@ -869,21 +824,24 @@
             form.submit();
         }
     }
+    // 确认删除领养申请
+    function confirmDeleteApplication(applicationId, petName) {
+        if (confirm('确定要删除 "' + petName + '" 的领养申请吗？删除后无法恢复！')) {
+            // 动态创建表单提交删除请求
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '${pageContext.request.contextPath}/user/adoption/delete'; // 后端处理删除的Servlet路径
 
-    // 自动隐藏“删除成功”等成功提示：10秒后淡出并移除
-    document.addEventListener('DOMContentLoaded', function () {
-        var successAlert = document.querySelector('.alert-success');
-        if (!successAlert) return;
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id'; // 参数名，对应领养申请ID
+            input.value = applicationId;
 
-        setTimeout(function () {
-            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-                var bsAlert = new bootstrap.Alert(successAlert);
-                bsAlert.close();
-            } else {
-                successAlert.classList.remove('show');
-            }
-        }, 10000); // 10 秒
-    });
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
 </script>
 </body>
 </html>

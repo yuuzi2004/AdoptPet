@@ -230,12 +230,12 @@
         }
 
         /* 寻宠信息专属样式 */
-        .record-status.search-pet-status-searching {
+        .search-pet-status-searching {
             background-color: rgba(229, 62, 62, 0.2);
             color: #e53e3e;
         }
 
-        .record-status.search-pet-status-found {
+        .search-pet-status-found {
             background-color: rgba(72, 187, 120, 0.2);
             color: #48bb78;
         }
@@ -639,6 +639,22 @@
                                                     <span class="text-muted">${search.contact}</span>
                                                 </p>
                                             </div>
+
+                                            <!-- 寻宠状态 -->
+                                            <div class="d-flex align-items-center">
+                                                <c:choose>
+                                                    <c:when test="${search.status == 'searching'}">
+                                                        <span class="badge-type search-pet-status-searching">
+                                                            <i class="bi bi-hourglass-half me-1"></i>寻找中
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${search.status == 'found'}">
+                                                        <span class="badge-type search-pet-status-found">
+                                                            <i class="bi bi-check-circle me-1"></i>已找回
+                                                        </span>
+                                                    </c:when>
+                                                </c:choose>
+                                            </div>
                                         </div>
 
                                         <!-- 寻宠图片（如果有） -->
@@ -669,47 +685,32 @@
 
                                     <!-- 操作按钮 -->
                                     <div class="card-footer">
-                                        <div class="record-footer">
-                                            <div class="d-flex flex-wrap gap-2">
-                                                <!-- 查看详情 -->
-                                                <a href="${pageContext.request.contextPath}/pet/search?detailId=${search.id}"
-                                                   class="btn btn-sm btn-outline-primary btn-action">
-                                                    <i class="bi bi-info-circle me-1"></i>查看详情
-                                                </a>
+                                        <div class="d-flex gap-2">
+                                            <!-- 查看详情 -->
+                                            <a href="${pageContext.request.contextPath}/pet/search?detailId=${search.id}"
+                                               class="btn btn-sm btn-outline-primary btn-action">
+                                                <i class="bi bi-info-circle me-1"></i>查看详情
+                                            </a>
 
-                                                <!-- 标记找回 -->
-                                                <c:if test="${search.status == 'searching'}">
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-success btn-action"
-                                                            data-search-id="${search.id}"
-                                                            data-search-name="${fn:escapeXml(search.name)}"
-                                                            onclick="handleSearchFound(this)">
-                                                        <i class="bi bi-check-circle me-1"></i>标记找回
-                                                    </button>
-                                                </c:if>
-
-                                                <!-- 删除寻宠信息 -->
+                                            <!-- 标记找回 -->
+                                            <c:if test="${search.status == 'searching'}">
                                                 <button type="button"
-                                                        class="btn btn-sm btn-danger btn-action"
+                                                        class="btn btn-sm btn-success btn-action"
                                                         data-search-id="${search.id}"
                                                         data-search-name="${fn:escapeXml(search.name)}"
-                                                        onclick="handleSearchDelete(this)">
-                                                    <i class="bi bi-trash me-1"></i>删除
+                                                        onclick="handleSearchFound(this)">
+                                                    <i class="bi bi-check-circle me-1"></i>标记找回
                                                 </button>
-                                            </div>
-                                            <!-- 寻宠状态 -->
-                                            <c:choose>
-                                                <c:when test="${search.status == 'searching'}">
-                                                    <span class="record-status search-pet-status-searching">
-                                                        <i class="bi bi-hourglass-half"></i>寻找中
-                                                    </span>
-                                                </c:when>
-                                                <c:when test="${search.status == 'found'}">
-                                                    <span class="record-status search-pet-status-found">
-                                                        <i class="bi bi-check-circle"></i>已找回
-                                                    </span>
-                                                </c:when>
-                                            </c:choose>
+                                            </c:if>
+
+                                            <!-- 删除寻宠信息 -->
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btn-action"
+                                                    data-search-id="${search.id}"
+                                                    data-search-name="${fn:escapeXml(search.name)}"
+                                                    onclick="handleSearchDelete(this)">
+                                                <i class="bi bi-trash me-1"></i>删除
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

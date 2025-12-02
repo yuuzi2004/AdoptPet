@@ -230,12 +230,12 @@
         }
 
         /* 寻宠信息专属样式 */
-        .record-status.search-pet-status-searching {
+        .search-pet-status-searching {
             background-color: rgba(229, 62, 62, 0.2);
             color: #e53e3e;
         }
 
-        .record-status.search-pet-status-found {
+        .search-pet-status-found {
             background-color: rgba(72, 187, 120, 0.2);
             color: #48bb78;
         }

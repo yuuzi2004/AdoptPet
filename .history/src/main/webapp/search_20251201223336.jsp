@@ -389,32 +389,10 @@
                     <c:forEach items="${searchList}" var="search">
                         <div class="col-md-6 col-lg-4">
                             <div class="card pet-card">
-                                <c:choose>
-                                    <c:when test="${not empty search.imagePath}">
-                                        <c:choose>
-                                            <c:when test="${fn:startsWith(search.imagePath, 'uploads/')}">
-                                                <img src="${pageContext.request.contextPath}/uploads/${fn:substringAfter(search.imagePath, 'uploads/')}"
-                                                     class="card-img-top"
-                                                     alt="${search.name}"
-                                                     style="height: 220px; object-fit: cover;"
-                                                     onerror="this.src='https://via.placeholder.com/600x400/c7ecee/2d5016?text=${search.name}'">
-                                            </c:when>
-                                            <c:otherwise>
-                                                <img src="${pageContext.request.contextPath}/${search.imagePath}"
-                                                     class="card-img-top"
-                                                     alt="${search.name}"
-                                                     style="height: 220px; object-fit: cover;"
-                                                     onerror="this.src='https://via.placeholder.com/600x400/c7ecee/2d5016?text=${search.name}'">
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img src="https://via.placeholder.com/600x400/c7ecee/2d5016?text=${search.name}"
-                                             class="card-img-top"
-                                             alt="${search.name}"
-                                             style="height: 220px; object-fit: cover;">
-                                    </c:otherwise>
-                                </c:choose>
+                                <img src="https://via.placeholder.com/600x400/c7ecee/2d5016?text=${search.name}"
+                                     class="card-img-top"
+                                     alt="${search.name}"
+                                     style="height: 220px; object-fit: cover;">
                                 <div class="card-body">
                                     <h5 class="card-title" style="color: #2d5016;">${search.name}</h5>
                                     <p class="text-muted small mb-2">

@@ -121,19 +121,19 @@
         }
 
         .stat-icon.primary {
-            background: linear-gradient(135deg, var(--primary-color), #7dd3a0);
+            background: linear-gradient(135deg, var(--primary-color), #4f46e5);
         }
 
         .stat-icon.success {
-            background: linear-gradient(135deg, var(--success-color), #7dd3a0);
+            background: linear-gradient(135deg, var(--success-color), #059669);
         }
 
         .stat-icon.warning {
-            background: linear-gradient(135deg, var(--warning-color), #ffc966);
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
         }
 
         .stat-icon.danger {
-            background: linear-gradient(135deg, var(--danger-color), #ff8a80);
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
         }
 
         .stat-number {
@@ -278,102 +278,9 @@
         </div>
     </div>
 
-    <!-- 宠物列表 / 用户列表 / 最近宠物列表（根据请求路径动态显示） -->
-    <c:choose>
-        <c:when test="${not empty petList && (pageContext.request.requestURI.contains('/admin/pet/list') || pageContext.request.servletPath.contains('/admin/pet/list'))}">
-            <!-- 宠物管理页面：显示所有宠物 -->
-            <div class="content-card">
-                <h5 class="mb-4"><i class="bi bi-heart me-2"></i>宠物管理</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>名称</th>
-                            <th>类型</th>
-                            <th>年龄</th>
-                            <th>性别</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:choose>
-                            <c:when test="${not empty petList}">
-                                <c:forEach items="${petList}" var="pet">
-                                    <tr>
-                                        <td>${pet.id}</td>
-                                        <td>${pet.name}</td>
-                                        <td><span class="badge bg-primary">${pet.type}</span></td>
-                                        <td>${pet.age}岁</td>
-                                        <td>${pet.gender}</td>
-                                        <td>
-                                            <a href="${pageContext.request.contextPath}/admin/pet/edit?id=${pet.id}"
-                                               class="btn btn-sm btn-outline-primary me-2">
-                                                <i class="bi bi-pencil"></i>编辑
-                                            </a>
-                                            <a href="${pageContext.request.contextPath}/admin/pet/delete?id=${pet.id}"
-                                               class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('确定要删除这只宠物吗？')">
-                                                <i class="bi bi-trash"></i>删除
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">暂无数据</td>
-                                </tr>
-                            </c:otherwise>
-                        </c:choose>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </c:when>
-        <c:when test="${not empty userList && (pageContext.request.requestURI.contains('/admin/user/list') || pageContext.request.servletPath.contains('/admin/user/list'))}">
-            <!-- 用户管理页面：显示所有用户 -->
-            <div class="content-card">
-                <h5 class="mb-4"><i class="bi bi-people me-2"></i>用户管理</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>用户名</th>
-                            <th>邮箱</th>
-                            <th>电话</th>
-                            <th>注册时间</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:choose>
-                            <c:when test="${not empty userList}">
-                                <c:forEach items="${userList}" var="user">
-                                    <tr>
-                                        <td>${user.id}</td>
-                                        <td>${user.username}</td>
-                                        <td>${user.email != null ? user.email : '-'}</td>
-                                        <td>${user.phone != null ? user.phone : '-'}</td>
-                                        <td>${user.createTime != null ? user.createTime : '-'}</td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">暂无数据</td>
-                                </tr>
-                            </c:otherwise>
-                        </c:choose>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </c:when>
-        <c:otherwise>
-            <!-- 仪表盘页面：显示最近添加的宠物 -->
-            <div class="content-card">
-                <h5 class="mb-4"><i class="bi bi-list-ul me-2"></i>最近添加的宠物</h5>
+    <!-- 最近宠物列表（核心：编辑按钮已配置正确路径） -->
+    <div class="content-card">
+        <h5 class="mb-4"><i class="bi bi-list-ul me-2"></i>最近添加的宠物</h5>
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -422,14 +329,8 @@
             </table>
         </div>
     </div>
-        </c:otherwise>
-    </c:choose>
 
-    <!-- 待处理领养申请（仅在仪表盘显示） -->
-    <c:set var="isDashboard" value="${pageContext.request.requestURI.contains('/admin/dashboard') || pageContext.request.servletPath.contains('/admin/dashboard')}" />
-    <c:set var="isPetList" value="${pageContext.request.requestURI.contains('/admin/pet/list') || pageContext.request.servletPath.contains('/admin/pet/list')}" />
-    <c:set var="isUserList" value="${pageContext.request.requestURI.contains('/admin/user/list') || pageContext.request.servletPath.contains('/admin/user/list')}" />
-    <c:if test="${isDashboard || (!isPetList && !isUserList)}">
+    <!-- 待处理领养申请 -->
     <div class="content-card mt-4">
         <h5 class="mb-4"><i class="bi bi-file-earmark-text me-2"></i>待处理领养申请（快捷审核）</h5>
         <div class="table-responsive">
@@ -477,7 +378,6 @@
             </table>
         </div>
     </div>
-    </c:if>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
