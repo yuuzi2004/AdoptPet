@@ -308,6 +308,27 @@
                         <option value="其他">其他</option>
                     </select>
                 </div>
+                <!-- 新增：宠物年龄输入框 -->
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="bi bi-calendar-check"></i>
+                        宠物年龄 <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" class="form-control" id="age" name="age"
+                           min="0" required placeholder="请输入宠物年龄（整数）">
+                </div>
+                <!-- 新增：宠物性别选择框 -->
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="bi bi-gender-ambiguous"></i>
+                        宠物性别 <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option value="">请选择性别</option>
+                        <option value="公">公</option>
+                        <option value="母">母</option>
+                    </select>
+                </div>
                 <div class="col-md-6">
                     <label class="form-label">
                         <i class="bi bi-geo-alt"></i>
@@ -419,7 +440,10 @@
                                     <h5 class="card-title" style="color: #2d5016;">${search.name}</h5>
                                     <p class="text-muted small mb-2">
                                         <i class="bi bi-tag me-1"></i>${search.type} ·
-                                        <i class="bi bi-geo-alt me-1"></i>${search.location}
+                                        <i class="bi bi-geo-alt me-1"></i>${search.location} ·
+                                        <!-- 新增：显示年龄和性别 -->
+                                        <i class="bi bi-calendar-check me-1"></i>${search.age}岁 ·
+                                        <i class="bi bi-gender-ambiguous me-1"></i>${search.gender}
                                     </p>
                                     <p class="card-text">${fn:substring(search.description, 0, 50)}${fn:length(search.description) > 50 ? '...' : ''}</p>
                                     <p class="text-muted small">

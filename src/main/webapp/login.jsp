@@ -225,6 +225,13 @@
     </style>
 </head>
 <body>
+<!-- 退出成功提示 -->
+<c:if test="${param.logout == 'success'}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        已成功退出登录！
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</c:if>
 <!-- 返回登录类型选择页 （统一类名+样式） -->
 <a href="${pageContext.request.contextPath}/login_choice.jsp" class="back-choice">
     <i class="bi bi-arrow-left me-2"></i>返回选择登录类型

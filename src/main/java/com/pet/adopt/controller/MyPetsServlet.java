@@ -1,14 +1,14 @@
 package com.pet.adopt.controller;
 
 import com.pet.adopt.entity.Pet;
-import com.pet.adopt.entity.AdoptionApplication; // 新增：导入领养申请实体类
-import com.pet.adopt.entity.PetSearch; // 新增：导入寻宠信息实体类
+import com.pet.adopt.entity.AdoptionApplication;
+import com.pet.adopt.entity.PetSearch;
 import com.pet.adopt.service.PetService;
 import com.pet.adopt.service.PetServiceImpl;
-import com.pet.adopt.service.AdoptionApplicationService; // 新增：导入领养申请Service
-import com.pet.adopt.service.AdoptionApplicationServiceImpl; // 新增：导入领养申请Service实现类
-import com.pet.adopt.service.PetSearchService; // 新增：导入寻宠信息Service
-import com.pet.adopt.service.PetSearchServiceImpl; // 新增：导入寻宠信息Service实现类
+import com.pet.adopt.service.AdoptionApplicationService;
+import com.pet.adopt.service.AdoptionApplicationServiceImpl;
+import com.pet.adopt.service.PetSearchService;
+import com.pet.adopt.service.PetSearchServiceImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,9 +22,7 @@ import java.util.List;
 @WebServlet("/user/my-pets")
 public class MyPetsServlet extends HttpServlet {
     private PetService petService = new PetServiceImpl();
-    // 新增：创建领养申请Service对象
     private AdoptionApplicationService adoptionService = new AdoptionApplicationServiceImpl();
-    // 新增：创建寻宠信息Service对象
     private PetSearchService petSearchService = new PetSearchServiceImpl();
 
     @Override
@@ -36,7 +34,7 @@ public class MyPetsServlet extends HttpServlet {
 
             System.out.println("===== MyPetsServlet 开始处理请求 =====");
 
-            // 1. 检查用户是否已登录（你的原有逻辑，保留）
+            // 1. 检查用户是否已登录
             HttpSession session = req.getSession(false);
             if (session == null || session.getAttribute("userId") == null) {
                 System.out.println("用户未登录，重定向到登录页");
@@ -45,29 +43,40 @@ public class MyPetsServlet extends HttpServlet {
                 return;
             }
 
-            // 2. 获取当前用户ID（你的原有逻辑，保留）
+            // 2. 获取当前用户ID
             Integer userId = (Integer) session.getAttribute("userId");
             System.out.println("当前用户ID：" + userId);
 
-            // 3. 查询该用户发布的所有宠物信息（你的原有逻辑，保留）
+            // 3. 查询该用户发布的所有宠物信息
             System.out.println("开始查询宠物信息...");
             List<Pet> petList = petService.findPetsByUserId(userId);
             req.setAttribute("petList", petList);
             System.out.println("查询到 " + (petList != null ? petList.size() : 0) + " 条宠物信息");
 
-            // 新增：4. 查询该用户的所有领养申请记录
+            // 新增：4. 查询该用户的所有领养申请记录 + 关联Pet对象（核心修改）
             System.out.println("开始查询领养申请记录...");
             List<AdoptionApplication> applicationList = adoptionService.getApplicationsByUserId(userId);
-            req.setAttribute("applicationList", applicationList); // 传递到JSP页面
+            // 关键：给每个领养申请关联对应的Pet对象
+            if (applicationList != null && !applicationList.isEmpty()) {
+                for (AdoptionApplication app : applicationList) {
+                    if (app.getPetId() != null) {
+                        // 根据petId查询宠物信息，设置到申请对象中
+                        Pet pet = petService.findPetById(app.getPetId());
+                        app.setPet(pet);
+                        System.out.println("申请ID：" + app.getId() + " 关联宠物：" + (pet != null ? pet.getName() : "无"));
+                    }
+                }
+            }
+            req.setAttribute("applicationList", applicationList);
             System.out.println("查询到 " + (applicationList != null ? applicationList.size() : 0) + " 条领养申请");
 
             // 新增：5. 查询该用户发布的所有寻宠信息
             System.out.println("开始查询寻宠信息...");
             List<PetSearch> myPetSearchList = petSearchService.getMyPetSearchList(userId);
-            req.setAttribute("myPetSearchList", myPetSearchList); // 传递到JSP页面
+            req.setAttribute("myPetSearchList", myPetSearchList);
             System.out.println("查询到 " + (myPetSearchList != null ? myPetSearchList.size() : 0) + " 条寻宠信息");
 
-            // 6. 转发到个人中心页面（你的原有逻辑，保留）
+            // 6. 转发到个人中心页面
             System.out.println("准备转发到 /my-pets.jsp");
             req.getRequestDispatcher("/my-pets.jsp").forward(req, resp);
             System.out.println("转发完成");

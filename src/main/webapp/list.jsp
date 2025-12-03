@@ -503,15 +503,15 @@
                                         <i class="bi bi-heart-fill text-danger me-1" style="font-size: 0.875rem;"></i>
                                             ${pet.name}
                                     </h5>
-                                    <div class="pet-info">
-                                        <span class="pet-info-item">
-                                            <i class="bi bi-calendar-check"></i>
-                                            ${pet.age}岁
-                                        </span>
-                                        <span class="pet-info-item">
-                                            <i class="bi bi-venus-mars"></i>
-                                            ${pet.gender}
-                                        </span>
+                                    <div class="pet-info" style="margin: 10px 0; padding: 8px; background-color: #f8f9fa; border-radius: 8px;">
+    <span class="pet-info-item" style="margin-right: 15px; font-weight: 500;">
+        <i class="bi bi-calendar-check text-primary"></i>
+        年龄：${pet.age}岁
+    </span>
+                                        <span class="pet-info-item" style="font-weight: 500;">
+        <i class="bi bi-venus-mars text-primary"></i>
+        性别：${pet.gender}
+    </span>
                                     </div>
                                     <p class="pet-description">${pet.description}</p>
                                 </div>

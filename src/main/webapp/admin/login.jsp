@@ -209,7 +209,6 @@
             </div>
         </c:if>
 
-        <!-- 管理员登录表单（与你的Servlet参数匹配：name="username"/"password"） -->
         <form action="${pageContext.request.contextPath}/admin/login" method="post">
             <div class="form-group">
                 <label for="username">管理员账号</label>

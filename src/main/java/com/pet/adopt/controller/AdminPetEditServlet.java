@@ -49,9 +49,9 @@ public class AdminPetEditServlet extends HttpServlet {
                 pet.setImagePath(rs.getString("image_path"));
             }
 
-            // 3. 将宠物信息传递到JSP页面
+            // 3. 将宠物信息传递到JSP页面（修改路径，添加admin目录前缀）
             req.setAttribute("pet", pet);
-            req.getRequestDispatcher("/edit-pet.jsp").forward(req, resp);
+            req.getRequestDispatcher("/admin/edit-pet.jsp").forward(req, resp);
 
         } catch (Exception e) {
             e.printStackTrace();

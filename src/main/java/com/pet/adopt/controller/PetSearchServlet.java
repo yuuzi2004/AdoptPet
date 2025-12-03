@@ -127,6 +127,35 @@ public class PetSearchServlet extends HttpServlet {
         String description = req.getParameter("description");
         String contact = req.getParameter("contact");
 
+        // 接收并验证 age 参数
+        Integer age = null;
+        String ageStr = req.getParameter("age");
+        if (ageStr == null || ageStr.trim().isEmpty()) {
+            req.setAttribute("error", "请填写宠物年龄");
+            doGet(req, resp);
+            return;
+        }
+        try {
+            age = Integer.parseInt(ageStr.trim());
+            if (age < 0) {
+                req.setAttribute("error", "年龄不能为负数");
+                doGet(req, resp);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            req.setAttribute("error", "年龄必须为整数");
+            doGet(req, resp);
+            return;
+        }
+
+        // 接收并验证性别参数（核心修复1：添加性别参数处理）
+        String gender = req.getParameter("gender");
+        if (gender == null || gender.trim().isEmpty()) {
+            req.setAttribute("error", "请选择宠物性别");
+            doGet(req, resp);
+            return;
+        }
+
         // 处理图片上传
         String imagePath = null;
         try {
@@ -168,33 +197,33 @@ public class PetSearchServlet extends HttpServlet {
             }
         }
 
-        // 保存到数据库
-        boolean success = addPetSearch(name, type, location, lostTime, description, contact, imagePath, userId);
+        // 保存到数据库（传递gender参数）
+        boolean success = addPetSearch(name, type, location, lostTime, description, contact,
+                imagePath, userId, age, gender);
 
+        // 重定向到结果页
         if (success) {
-            req.setAttribute("successMsg", "寻宠信息发布成功！");
+            resp.sendRedirect(req.getContextPath() + "/pet/search?successMsg=寻宠信息发布成功！");
         } else {
-            req.setAttribute("error", "发布失败，请稍后重试！");
+            resp.sendRedirect(req.getContextPath() + "/pet/search?error=发布失败，请稍后重试！");
         }
-
-        // 重新查询列表并刷新页面
-        List<PetSearch> searchList = findAllPetSearches();
-        req.setAttribute("searchList", searchList);
-        req.getRequestDispatcher("/search.jsp").forward(req, resp);
     }
 
     // ========== 私有方法：新增寻宠信息到数据库 ==========
-    // ========== 私有方法：新增寻宠信息到数据库 ==========
+    // 修复方法参数，增加gender参数（核心修复2：完善方法定义）
     private boolean addPetSearch(String name, String type, String location, LocalDateTime lostTime,
-                                 String description, String contact, String imagePath, Integer userId) {
+                                 String description, String contact, String imagePath, Integer userId,
+                                 Integer age, String gender) {  // 新增gender参数
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
             conn = JdbcUtils.getConnection();
-            // 补充 image_path 字段的插入（与数据库表结构匹配）
-            String sql = "INSERT INTO pet_search (name, type, location, lost_time, description, contact, user_id, status, create_time, image_path) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, 'searching', NOW(), ?)";
+            // SQL 中增加 gender 字段（核心修复3：完善SQL语句）
+            String sql = "INSERT INTO pet_search (name, type, location, lost_time, description, " +
+                    "contact, user_id, status, create_time, image_path, age, gender) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, 'searching', NOW(), ?, ?, ?)";
+
             pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, name);
@@ -204,11 +233,13 @@ public class PetSearchServlet extends HttpServlet {
             pstmt.setString(5, description);
             pstmt.setString(6, contact);
             pstmt.setInt(7, userId);
-            pstmt.setString(8, imagePath); // 新增：存储图片路径
+            pstmt.setString(8, imagePath);
+            pstmt.setInt(9, age);
+            pstmt.setString(10, gender);  // 核心修复4：设置性别参数
 
             int result = pstmt.executeUpdate();
             System.out.println("发布寻宠结果：" + (result > 0 ? "成功" : "失败") +
-                    "，名称：" + name + "，用户ID：" + userId + "，图片路径：" + imagePath);
+                    "，名称：" + name + "，性别：" + gender + "，用户ID：" + userId);
             return result > 0;
 
         } catch (SQLException e) {
@@ -221,7 +252,6 @@ public class PetSearchServlet extends HttpServlet {
     }
 
     // ========== 私有方法：查询所有寻宠信息（全局列表） ==========
-// ========== 私有方法：查询所有寻宠信息（全局列表） ==========
     private List<PetSearch> findAllPetSearches() {
         List<PetSearch> searchList = new ArrayList<>();
         Connection conn = null;
@@ -230,8 +260,9 @@ public class PetSearchServlet extends HttpServlet {
 
         try {
             conn = JdbcUtils.getConnection();
-            // 补充查询 image_path、status、create_time 字段，增加状态过滤
-            String sql = "SELECT id, name, type, location, lost_time, description, contact, user_id, image_path, status, create_time " +
+            // 补充查询 gender 字段（核心修复5：查询时包含性别）
+            String sql = "SELECT id, name, type, location, lost_time, description, contact, " +
+                    "user_id, image_path, status, create_time, age, gender " +
                     "FROM pet_search WHERE status = 'searching' ORDER BY create_time DESC";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
@@ -242,6 +273,7 @@ public class PetSearchServlet extends HttpServlet {
                 search.setName(rs.getString("name"));
                 search.setType(rs.getString("type"));
                 search.setLocation(rs.getString("location"));
+                search.setGender(rs.getString("gender"));  // 核心修复6：设置性别属性
 
                 Timestamp lostTime = rs.getTimestamp("lost_time");
                 if (lostTime != null) {
@@ -251,13 +283,14 @@ public class PetSearchServlet extends HttpServlet {
                 search.setDescription(rs.getString("description"));
                 search.setContact(rs.getString("contact"));
                 search.setUserId(rs.getInt("user_id"));
-                search.setImagePath(rs.getString("image_path")); // 新增：读取图片路径
-                search.setStatus(rs.getString("status")); // 新增：读取状态
-                search.setCreateTime(rs.getTimestamp("create_time").toLocalDateTime()); // 新增：创建时间
+                search.setImagePath(rs.getString("image_path"));
+                search.setStatus(rs.getString("status"));
+                search.setCreateTime(rs.getTimestamp("create_time").toLocalDateTime());
+                search.setAge(rs.getInt("age"));
 
                 searchList.add(search);
             }
-            System.out.println("全局寻宠列表数量（修正后）：" + searchList.size());
+            System.out.println("全局寻宠列表数量：" + searchList.size());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -270,7 +303,6 @@ public class PetSearchServlet extends HttpServlet {
     }
 
     // ========== 私有方法：根据用户ID查询个人寻宠信息 ==========
-    // ========== 私有方法：根据用户ID查询个人寻宠信息 ==========
     private List<PetSearch> findPetSearchesByUserId(Integer userId) {
         List<PetSearch> myList = new ArrayList<>();
         Connection conn = null;
@@ -279,9 +311,9 @@ public class PetSearchServlet extends HttpServlet {
 
         try {
             conn = JdbcUtils.getConnection();
-            // 1. 补充查询 image_path 和 status 字段
-            // 2. 增加 status 条件（只显示未找到的记录，与业务逻辑一致）
-            String sql = "SELECT id, name, type, location, lost_time, description, contact, image_path, status " +
+            // 补充查询 gender 和 age 字段（核心修复7：个人查询包含性别）
+            String sql = "SELECT id, name, type, location, lost_time, description, contact, " +
+                    "image_path, status, age, gender " +
                     "FROM pet_search WHERE user_id = ? AND status = 'searching' ORDER BY create_time DESC";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
@@ -293,6 +325,8 @@ public class PetSearchServlet extends HttpServlet {
                 search.setName(rs.getString("name"));
                 search.setType(rs.getString("type"));
                 search.setLocation(rs.getString("location"));
+                search.setGender(rs.getString("gender"));  // 核心修复8：设置性别属性
+                search.setAge(rs.getInt("age"));
 
                 Timestamp lostTime = rs.getTimestamp("lost_time");
                 if (lostTime != null) {
@@ -302,12 +336,12 @@ public class PetSearchServlet extends HttpServlet {
                 search.setDescription(rs.getString("description"));
                 search.setContact(rs.getString("contact"));
                 search.setUserId(userId);
-                search.setImagePath(rs.getString("image_path")); // 新增：读取图片路径
-                search.setStatus(rs.getString("status")); // 新增：读取状态
+                search.setImagePath(rs.getString("image_path"));
+                search.setStatus(rs.getString("status"));
 
                 myList.add(search);
             }
-            System.out.println("个人寻宠列表数量（修正后）：" + myList.size() + "，用户ID：" + userId);
+            System.out.println("个人寻宠列表数量：" + myList.size() + "，用户ID：" + userId);
 
         } catch (SQLException e) {
             e.printStackTrace();

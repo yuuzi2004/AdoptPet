@@ -328,9 +328,6 @@
                     </c:choose>
                 </p>
             </div>
-            <a href="${pageContext.request.contextPath}/add.jsp" class="btn btn-primary btn-action">
-                <i class="bi bi-plus-circle me-2"></i>发布新信息
-            </a>
         </div>
 
         <!-- 宠物列表卡片 -->
@@ -394,10 +391,20 @@
                                 </div>
                                 <div class="card-footer">
                                     <div class="d-flex flex-column gap-2">
-                                        <a href="${pageContext.request.contextPath}/pet/detail?id=${pet.id}"
-                                           class="btn btn-sm btn-outline-primary btn-action">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary btn-action"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#petDetailModal"
+                                                data-pet-id="${pet.id}"
+                                                data-pet-name="${fn:escapeXml(pet.name)}"
+                                                data-pet-type="${fn:escapeXml(pet.type)}"
+                                                data-pet-age="${fn:escapeXml(pet.age)}"
+                                                data-pet-gender="${fn:escapeXml(pet.gender)}"
+                                                data-pet-description="${fn:escapeXml(pet.description)}"
+                                                data-pet-image="${pet.imagePath}"
+                                                onclick="loadPetDetail(this)">
                                             <i class="bi bi-info-circle me-1"></i>查看详情
-                                        </a>
+                                        </button>
                                         <div class="d-flex gap-2">
                                             <a href="${pageContext.request.contextPath}/user/pet/edit?id=${pet.id}"
                                                class="btn btn-sm btn-primary btn-action flex-grow-1">
@@ -481,16 +488,16 @@
                                                     <span class="pet-info-item">
                                                 <i class="bi bi-clock"></i>
                                                 申请时间：<c:choose>
-                                                    <c:when test="${not empty application.createTime}">
-                                                        <%
-                                                            com.pet.adopt.entity.AdoptionApplication appItem = (com.pet.adopt.entity.AdoptionApplication) pageContext.getAttribute("application");
-                                                            if (appItem != null && appItem.getCreateTime() != null) {
-                                                                out.print(appItem.getCreateTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                                                            }
-                                                        %>
-                                                    </c:when>
-                                                    <c:otherwise>未知</c:otherwise>
-                                                </c:choose>
+                                                        <c:when test="${not empty application.createTime}">
+                                                            <%
+                                                                com.pet.adopt.entity.AdoptionApplication appItem = (com.pet.adopt.entity.AdoptionApplication) pageContext.getAttribute("application");
+                                                                if (appItem != null && appItem.getCreateTime() != null) {
+                                                                    out.print(appItem.getCreateTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                                                }
+                                                            %>
+                                                        </c:when>
+                                                        <c:otherwise>未知</c:otherwise>
+                                                    </c:choose>
                                             </span>
                                                 </div>
                                                 <p class="mt-2">
@@ -508,17 +515,27 @@
                                     <div class="card-footer">
                                         <div class="record-footer">
                                             <div class="d-flex flex-wrap gap-2">
-                                            <a href="${pageContext.request.contextPath}/pet/detail?id=${application.petId}"
-                                               class="btn btn-sm btn-outline-primary btn-action">
-                                                <i class="bi bi-info-circle me-1"></i>查看宠物详情
-                                            </a>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-danger btn-action"
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-action"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#petDetailModal"
+                                                        data-pet-id="${application.pet != null ? application.pet.id : ''}"
+                                                        data-pet-name="${application.pet != null && not empty application.pet.name ? fn:escapeXml(application.pet.name) : '未知宠物'}"
+                                                        data-pet-type="${application.pet != null && not empty application.pet.type ? fn:escapeXml(application.pet.type) : '未知类型'}"
+                                                        data-pet-age="${application.pet != null && application.pet.age != null ? application.pet.age : '未知'}"
+                                                        data-pet-gender="${application.pet != null && not empty application.pet.gender ? fn:escapeXml(application.pet.gender) : '未填写'}"
+                                                        data-pet-description="${application.pet != null && not empty application.pet.description ? fn:escapeXml(application.pet.description) : '暂无描述'}"
+                                                        data-pet-image="${application.pet != null ? application.pet.imagePath : ''}"
+                                                        onclick="loadPetDetail(this)">
+                                                    <i class="bi bi-info-circle me-1"></i>查看详情
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger btn-action"
                                                         data-application-id="${application.id}"
                                                         data-pet-name="${fn:escapeXml(application.petName)}"
                                                         onclick="handleApplicationDelete(this)">
-                                                <i class="bi bi-trash me-1"></i>删除申请
-                                            </button>
+                                                    <i class="bi bi-trash me-1"></i>删除申请
+                                                </button>
                                             </div>
                                             <c:choose>
                                                 <c:when test="${application.status == 'pending'}">
@@ -579,10 +596,6 @@
                         </c:choose>
                     </p>
                 </div>
-                <!-- 发布寻宠信息按钮 -->
-                <a href="${pageContext.request.contextPath}/search.jsp" class="btn btn-primary btn-action">
-                    <i class="bi bi-plus-circle me-2"></i>发布寻宠信息
-                </a>
             </div>
 
             <!-- 寻宠信息列表 -->
@@ -614,16 +627,16 @@
                                                     <span class="pet-info-item">
                                                         <i class="bi bi-clock"></i>
                                                         丢失时间：<c:choose>
-                                                            <c:when test="${not empty search.lostTime}">
-                                                                <%
-                                                                    com.pet.adopt.entity.PetSearch searchItem = (com.pet.adopt.entity.PetSearch) pageContext.getAttribute("search");
-                                                                    if (searchItem != null && searchItem.getLostTime() != null) {
-                                                                        out.print(searchItem.getLostTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                                                                    }
-                                                                %>
-                                                            </c:when>
-                                                            <c:otherwise>未知</c:otherwise>
-                                                        </c:choose>
+                                                        <c:when test="${not empty search.lostTime}">
+                                                            <%
+                                                                com.pet.adopt.entity.PetSearch searchItem = (com.pet.adopt.entity.PetSearch) pageContext.getAttribute("search");
+                                                                if (searchItem != null && searchItem.getLostTime() != null) {
+                                                                    out.print(searchItem.getLostTime().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                                                }
+                                                            %>
+                                                        </c:when>
+                                                        <c:otherwise>未知</c:otherwise>
+                                                    </c:choose>
                                                     </span>
                                                 </div>
 
@@ -671,13 +684,23 @@
                                     <div class="card-footer">
                                         <div class="record-footer">
                                             <div class="d-flex flex-wrap gap-2">
-                                                <!-- 查看详情 -->
-                                                <a href="${pageContext.request.contextPath}/pet/search?detailId=${search.id}"
-                                                   class="btn btn-sm btn-outline-primary btn-action">
+                                                <!-- 修改后（添加2行数据属性） -->
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-action"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#petDetailModal"
+                                                        data-pet-name="${fn:escapeXml(search.name)}"
+                                                        data-pet-type="${fn:escapeXml(search.type)}"
+                                                        data-pet-age="${search.age != null ? search.age : '未知'}"
+                                                        data-pet-gender="${fn:escapeXml(search.gender != null ? search.gender : '未填写')}"
+                                                        data-pet-description="${fn:escapeXml(search.description)}"
+                                                        data-pet-image="${search.imagePath}"
+                                                        data-search-location="${fn:escapeXml(search.location)}"
+                                                        data-search-losttime="${search.lostTime != null ? fn:escapeXml(search.lostTime.toString()) : '未知'}"
+                                                        data-search-contact="${fn:escapeXml(search.contact)}"
+                                                        onclick="loadSearchDetail(this)">
                                                     <i class="bi bi-info-circle me-1"></i>查看详情
-                                                </a>
-
-                                                <!-- 标记找回 -->
+                                                </button>        <!-- 标记找回 -->
                                                 <c:if test="${search.status == 'searching'}">
                                                     <button type="button"
                                                             class="btn btn-sm btn-success btn-action"
@@ -778,6 +801,89 @@
 <!-- 引入 Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // 加载领养宠物详情到弹窗
+    // 加载领养宠物详情到弹窗
+    function loadPetDetail(button) {
+        // 获取按钮上的宠物数据（增加空值兜底）
+        const petName = button.dataset.petName || '未知宠物';
+        const petType = button.dataset.petType || '未知类型';
+        const petAge = button.dataset.petAge || '未知';
+        const petGender = button.dataset.petGender || '未填写';
+        const petDescription = button.dataset.petDescription || '暂无描述';
+        const petImage = button.dataset.petImage || '';
+
+        // 填充弹窗内容
+        document.getElementById('modalPetName').textContent = petName + ' - 详情';
+        document.getElementById('modalPetNameText').textContent = petName;
+        document.getElementById('modalPetType').textContent = petType;
+        document.getElementById('modalPetAge').textContent = petAge + '岁';
+        document.getElementById('modalPetGender').textContent = petGender;
+        document.getElementById('modalPetDescription').textContent = petDescription;
+
+        // 处理宠物图片（修复路径拼接逻辑）
+        const modalImage = document.getElementById('modalPetImage');
+        if (petImage && petImage.trim() !== '') {
+            let imageSrc = '';
+            // 兼容绝对路径和相对路径
+            if (petImage.startsWith('http')) {
+                imageSrc = petImage; // 如果是网络图片直接使用
+            } else if (petImage.startsWith('uploads/')) {
+                imageSrc = contextPath + '/uploads/' + petImage.substring('uploads/'.length);
+            } else {
+                imageSrc = contextPath + '/' + petImage;
+            }
+            modalImage.src = imageSrc;
+            modalImage.onerror = function() {
+                this.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
+            };
+        } else {
+            modalImage.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
+        }
+    }
+    function loadSearchDetail(button) {
+        // 获取寻宠基础信息
+        const petName = button.dataset.petName || '未知宠物';
+        const petType = button.dataset.petType || '未知类型';
+        const petAge = button.dataset.petAge ? button.dataset.petAge + '岁' : '未知';
+        const petGender = button.dataset.petGender || '未填写';
+        const petDescription = button.dataset.petDescription || '暂无描述';
+        const petImage = button.dataset.petImage || '';
+
+        // 获取寻宠专属信息
+        const searchLocation = button.dataset.searchLocation || '未知位置';
+        const searchLosttime = button.dataset.searchLosttime || '未知时间';
+        const searchContact = button.dataset.searchContact || '未知联系方式';
+
+        // 填充基础弹窗内容
+        document.getElementById('modalPetName').textContent = petName + ' - 寻宠详情';
+        document.getElementById('modalPetNameText').textContent = petName;
+        document.getElementById('modalPetType').textContent = petType;
+        document.getElementById('modalPetAge').textContent = petAge;
+        document.getElementById('modalPetGender').textContent = petGender;
+
+        // 关键修改：使用HTML换行符<br>替换文本换行符
+        const formattedDesc = `丢失位置：${searchLocation}<br>丢失时间：${searchLosttime}<br>联系方式：${searchContact}<br><br>寻宠描述：${petDescription}`;
+        document.getElementById('modalPetDescription').innerHTML = formattedDesc; // 使用innerHTML解析HTML
+
+        // 处理寻宠图片（保持不变）
+        const modalImage = document.getElementById('modalPetImage');
+        if (petImage && petImage.trim() !== '') {
+            let imageSrc = '';
+            if (petImage.startsWith('http')) {
+                imageSrc = petImage;
+            } else if (petImage.startsWith('uploads/')) {
+                imageSrc = contextPath + '/uploads/' + petImage.substring('uploads/'.length);
+            } else {
+                imageSrc = contextPath + '/' + petImage;
+            }
+            modalImage.src = imageSrc;
+            modalImage.onerror = function() {
+                this.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
+            };
+        } else {
+            modalImage.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
+        }
+    }
     function handlePetDelete(button) {
         confirmDelete(button.dataset.petId, button.dataset.petName);
     }
@@ -884,6 +990,82 @@
             }
         }, 10000); // 10 秒
     });
+</script>
+<!-- 领养信息详情弹窗（支持领养和寻宠信息） -->
+<div class="modal fade" id="petDetailModal" tabindex="-1" aria-labelledby="petDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="petDetailModalLabel">
+                    <i class="bi bi-paw text-primary me-2"></i>
+                    <span id="modalPetName">宠物详情</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- 宠物图片 -->
+                    <div class="col-md-4 mb-3">
+                        <img id="modalPetImage"
+                             src="https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片"
+                             class="img-thumbnail w-100"
+                             alt="宠物图片">
+                    </div>
+                    <!-- 宠物信息表格 -->
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-borderless">
+                                <tbody>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3" style="width: 20%;">名称：</th>
+                                    <td class="py-3" id="modalPetNameText">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">类型：</th>
+                                    <td class="py-3" id="modalPetType">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">年龄：</th>
+                                    <td class="py-3" id="modalPetAge">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">性别：</th>
+                                    <td class="py-3" id="modalPetGender">-</td>
+                                </tr>
+                                <!-- 寻宠信息专属字段（默认隐藏） -->
+                                <tr class="border-bottom border-light search-only" style="display: none;">
+                                    <th class="py-3">丢失位置：</th>
+                                    <td class="py-3" id="modalSearchLocation">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light search-only" style="display: none;">
+                                    <th class="py-3">丢失时间：</th>
+                                    <td class="py-3" id="modalSearchLosttime">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light search-only" style="display: none;">
+                                    <th class="py-3">联系方式：</th>
+                                    <td class="py-3" id="modalSearchContact">-</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3" style="vertical-align: top;">详细描述：</th>
+                                    <!-- 移除white-space: pre-wrap样式 -->
+                                    <td class="py-3" id="modalPetDescription" style="line-height: 1.6;">-</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 全局路径变量（解决JS中路径解析问题） -->
+<script>
+    // 定义全局上下文路径
+    const contextPath = '${pageContext.request.contextPath}';
 </script>
 </body>
 </html>
