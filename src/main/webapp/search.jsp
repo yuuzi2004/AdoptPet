@@ -406,10 +406,6 @@
                     <button type="submit" class="btn btn-search">
                         <i class="bi bi-send me-2"></i>发布寻宠信息
                     </button>
-                    <!-- 修复3：返回按钮链接统一 -->
-                    <a href="${pageContext.request.contextPath}/pet/search" class="btn btn-outline-secondary ms-2">
-                        <i class="bi bi-arrow-left me-2"></i>返回列表
-                    </a>
                 </div>
             </div>
         </form>

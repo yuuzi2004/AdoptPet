@@ -159,19 +159,19 @@
 
     <!-- 右侧内容区（统一尺寸） -->
     <div class="main-content">
-        <!-- 统一标题栏 -->
+        <!-- 统一标题栏 - 修复退出按钮为可点击链接 -->
         <div class="page-header">
             <h2><i class="bi bi-heart-pulse me-2 text-danger"></i>宠物管理</h2>
             <div>
                 欢迎，管理员
-                <button class="btn btn-danger btn-sm ms-2">退出</button>
+                <a href="${pageContext.request.contextPath}/admin/logout" class="btn btn-danger btn-sm ms-2">退出</a>
             </div>
         </div>
 
         <!-- 统一卡片容器 -->
         <div class="card-container">
             <div class="mb-3">
-                <a href="${pageContext.request.contextPath}/add.jsp" class="btn btn-primary">
+                <a href="${pageContext.request.contextPath}/admin/pet/addPage" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> 添加新宠物
                 </a>
             </div>

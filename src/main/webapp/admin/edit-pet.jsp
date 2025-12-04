@@ -160,7 +160,7 @@
 
     <!-- 右侧内容区（统一尺寸） -->
     <div class="main-content">
-        <!-- 统一标题栏 -->
+        <!-- 统一标题栏 - 退出按钮已正确配置 -->
         <div class="page-header">
             <h2><i class="bi bi-pencil me-2"></i>编辑宠物信息</h2>
             <div>
