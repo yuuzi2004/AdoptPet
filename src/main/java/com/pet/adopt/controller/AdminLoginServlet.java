@@ -33,8 +33,8 @@ public class AdminLoginServlet extends HttpServlet {
             session.setAttribute("adminId", 1); // 模拟管理员ID
             session.setAttribute("adminUsername", username); // 存储用户名
 
-            // 跳转到管理员后台首页
-            resp.sendRedirect(req.getContextPath() + "/admin/dashboard.jsp");
+            // ========== 唯一修改：跳转到仪表盘Servlet（/admin/dashboard） ==========
+            resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
         } else {
             // 登录失败：返回登录页并显示错误信息
             req.setAttribute("error", "管理员账号或密码错误！");

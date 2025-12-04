@@ -204,6 +204,31 @@
             color: #721c24;
             border-left: 4px solid var(--danger-color);
         }
+
+        /* ========== 新增：详情弹窗样式 ========== */
+        .record-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .search-pet-status-searching {
+            background-color: rgba(229, 62, 62, 0.2);
+            color: #e53e3e;
+        }
+        .search-pet-status-found {
+            background-color: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+        .btn-action {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
     </style>
 </head>
 <body>
@@ -221,7 +246,8 @@
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/">首页</a></li>
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/pet/list">领养列表</a></li>
                 <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/add.jsp">发布信息</a></li>
-                <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/pet/search?action=default">寻找宠物</a></li>
+                <!-- 修复1：统一导航栏链接，移除多余参数 -->
+                <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/pet/search">寻找宠物</a></li>
                 <c:choose>
                     <c:when test="${not empty sessionScope.userId}">
                         <li class="nav-item dropdown">
@@ -273,8 +299,7 @@
 
     <!-- 发布成功提示（重定向后通过URL参数 successMsg 传递） -->
     <c:if test="${not empty param.successMsg}">
-        <div class="alert alert-success-custom mb-4 d-none" id="publishSuccessAlert"
-             data-success-msg="${fn:escapeXml(param.successMsg)}">
+        <div class="alert alert-success-custom mb-4" id="publishSuccessAlert">
             <i class="bi bi-check-circle me-2"></i>${param.successMsg}
         </div>
     </c:if>
@@ -288,6 +313,7 @@
 
     <div class="search-form-card">
         <h3 class="mb-4" style="color: #2d5016;"><i class="bi bi-file-earmark-plus me-2"></i>发布寻宠信息</h3>
+        <!-- 修复2：表单action移除多余参数，确保提交后路由统一 -->
         <form action="${pageContext.request.contextPath}/pet/search" method="post" enctype="multipart/form-data" id="searchForm">
             <div class="row g-3">
                 <div class="col-md-6">
@@ -380,7 +406,8 @@
                     <button type="submit" class="btn btn-search">
                         <i class="bi bi-send me-2"></i>发布寻宠信息
                     </button>
-                    <a href="${pageContext.request.contextPath}/search.jsp" class="btn btn-outline-secondary ms-2">
+                    <!-- 修复3：返回按钮链接统一 -->
+                    <a href="${pageContext.request.contextPath}/pet/search" class="btn btn-outline-secondary ms-2">
                         <i class="bi bi-arrow-left me-2"></i>返回列表
                     </a>
                 </div>
@@ -394,7 +421,15 @@
     <div class="container">
         <!-- 全部寻宠信息 -->
         <h3 class="mb-4"><i class="bi bi-list-ul me-2"></i>全部寻宠信息</h3>
-        <div class="row g-4">
+        <!-- 修复4：添加加载提示，优化用户体验 -->
+        <div id="loadingIndicator" class="text-center py-5" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">正在加载寻宠信息...</p>
+        </div>
+
+        <div class="row g-4" id="searchResultContainer">
             <c:choose>
                 <c:when test="${empty searchList}">
                     <div class="col-12">
@@ -453,6 +488,25 @@
                                     <p class="text-muted small">
                                         <i class="bi bi-telephone me-1"></i>联系方式：${search.contact}
                                     </p>
+
+                                    <!-- 查看详情按钮 -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-primary btn-action mt-2 w-100"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#petSearchDetailModal"
+                                            data-search-name="${fn:escapeXml(search.name)}"
+                                            data-search-type="${fn:escapeXml(search.type)}"
+                                            data-search-age="${search.age != null ? search.age : '未知'}"
+                                            data-search-gender="${fn:escapeXml(search.gender != null ? search.gender : '未填写')}"
+                                            data-search-location="${fn:escapeXml(search.location)}"
+                                            data-search-losttime="${search.lostTime != null ? fn:escapeXml(fn:replace(search.lostTime, 'T', ' ')) : '未知'}"
+                                            data-search-contact="${fn:escapeXml(search.contact)}"
+                                            data-search-description="${fn:escapeXml(search.description)}"
+                                            data-search-image="${search.imagePath}"
+                                            data-search-status="${search.status != null ? search.status : 'searching'}"
+                                            onclick="loadPublicSearchDetail(this)">
+                                        <i class="bi bi-info-circle me-1"></i>查看详情
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -463,46 +517,88 @@
     </div>
 </section>
 
-<!-- 页脚 -->
-<footer class="bg-dark text-white py-5 mt-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-4">
-                <h5 class="mb-3"><i class="bi bi-paw-fill me-2"></i>毛孩子领养平台</h5>
-                <p class="text-white-50 mb-0">用爱终止流浪，让每个生命都有归宿</p>
+<!-- 寻宠详情弹窗 -->
+<div class="modal fade" id="petSearchDetailModal" tabindex="-1" aria-labelledby="petSearchDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="petSearchDetailModalLabel">
+                    <i class="bi bi-search text-danger me-2"></i>
+                    <span id="modalSearchName">寻宠详情</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="col-md-4">
-                <h5 class="footer-title">快速链接</h5>
-                <ul class="list-unstyled">
-                    <li><a href="${pageContext.request.contextPath}/" class="footer-link">首页</a></li>
-                    <li><a href="${pageContext.request.contextPath}/pet/list" class="footer-link">领养列表</a></li>
-                    <li><a href="${pageContext.request.contextPath}/add.jsp" class="footer-link">发布信息</a></li>
-                    <li><a href="${pageContext.request.contextPath}/pet/search" class="footer-link">寻找宠物</a></li>
-                </ul>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- 寻宠图片 -->
+                    <div class="col-md-4 mb-3">
+                        <img id="modalSearchImage"
+                             src="https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片"
+                             class="img-thumbnail w-100"
+                             alt="寻宠图片">
+                    </div>
+
+                    <!-- 寻宠信息表格 -->
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-borderless">
+                                <tbody>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3" style="width: 20%;">宠物名称：</th>
+                                    <td class="py-3" id="modalSearchNameText">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">宠物类型：</th>
+                                    <td class="py-3" id="modalSearchType">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">年龄：</th>
+                                    <td class="py-3" id="modalSearchAge">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">性别：</th>
+                                    <td class="py-3" id="modalSearchGender">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">丢失位置：</th>
+                                    <td class="py-3" id="modalSearchLocation">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">丢失时间：</th>
+                                    <td class="py-3" id="modalSearchLosttime">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">联系电话：</th>
+                                    <td class="py-3" id="modalSearchContact">-</td>
+                                </tr>
+                                <tr class="border-bottom border-light">
+                                    <th class="py-3">寻宠状态：</th>
+                                    <td class="py-3" id="modalSearchStatus">
+                                        <span class="record-status search-pet-status-searching">寻找中</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3" style="vertical-align: top;">详细描述：</th>
+                                    <td class="py-3" id="modalSearchDescription" style="line-height: 1.6;">-</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <h5 class="footer-title">联系我们</h5>
-                <ul class="list-unstyled">
-                    <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
-                        <i class="bi bi-phone me-2"></i>19967849558
-                    </li>
-                    <li style="color: rgba(255,255,255,0.7); margin-bottom: 0.75rem;">
-                        <i class="bi bi-envelope me-2"></i>2180392550@qq.com
-                    </li>
-                    <li style="color: rgba(255,255,255,0.7);">
-                        <i class="bi bi-geo-alt me-2"></i>湖南省长沙市芙蓉区农大路1号
-                    </li>
-                </ul>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
             </div>
-        </div>
-        <div class="border-top border-secondary mt-4 pt-4 text-center text-white-50">
-            <p class="mb-0">© 2025 毛孩子领养平台 版权所有</p>
         </div>
     </div>
-</footer>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // 定义全局上下文路径
+    const contextPath = '${pageContext.request.contextPath}';
+
     // 图片预览功能
     function previewImage(input) {
         const preview = document.getElementById('imagePreview');
@@ -562,42 +658,124 @@
         }
     });
 
-    // Ajax 提交表单（局部刷新，不再弹出成功/失败模态框）
+    // 修复5：优化表单提交逻辑，确保提交后正确刷新数据
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('searchForm');
-        if (!form) return;
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const searchResultContainer = document.getElementById('searchResultContainer');
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault(); // 阻止默认提交，避免整页刷新
+        // 自动隐藏成功提示（5秒后）
+        const successAlert = document.getElementById('publishSuccessAlert');
+        if (successAlert) {
+            setTimeout(() => {
+                successAlert.style.opacity = '0';
+                successAlert.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => successAlert.remove(), 500);
+            }, 5000);
+        }
 
-            const formData = new FormData(form);
+        // 表单提交逻辑优化
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // 阻止默认提交
 
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest' // 让后端识别为 Ajax 请求
-                }
-            })
-                .then(response => {
-                    const contentType = response.headers.get('content-type') || '';
-                    if (contentType.includes('application/json')) {
-                        return response.json();
-                    } else {
-                        return response.text();
+                // 显示加载状态
+                loadingIndicator.style.display = 'block';
+                searchResultContainer.style.display = 'none';
+
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                .then(data => {
-                    console.log('发布返回结果 => ', data);
-                    // 成功后直接刷新当前页面，让下方列表更新；不再弹出任何提示框
-                    window.location.reload();
+                    .then(response => {
+                        // 无论返回什么，直接刷新页面获取最新数据
+                        window.location.href = contextPath + '/pet/search?successMsg=' + encodeURIComponent('发布成功！');
+                    })
+                    .catch(err => {
+                        console.error('发布请求出错：', err);
+                        loadingIndicator.style.display = 'none';
+                        searchResultContainer.style.display = 'block';
+                        alert('发布失败，请重试！');
+                    });
+            });
+        }
+
+        // 修复6：页面加载时主动刷新数据（解决首次加载无数据问题）
+        // 检查当前是否有数据，如果没有则主动请求一次
+        if (searchResultContainer && searchResultContainer.querySelector('.empty-state') && !window.location.search.includes('noReload')) {
+            // 添加随机参数避免缓存
+            fetch(contextPath + '/pet/search?reload=1&t=' + new Date().getTime())
+                .then(response => response.text())
+                .then(html => {
+                    // 替换整个结果区域
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    const newResult = tempDiv.querySelector('#searchResultContainer');
+                    if (newResult) {
+                        searchResultContainer.innerHTML = newResult.innerHTML;
+                    }
                 })
-                .catch(err => {
-                    console.error('发布请求出错：', err);
-                    // 仅在控制台打印错误，不再弹出 alert 或模态框
-                });
-        });
+                .catch(err => console.error('主动刷新数据失败：', err));
+        }
     });
+
+    // 加载公共寻宠信息详情
+    function loadPublicSearchDetail(button) {
+        // 获取寻宠信息
+        const searchName = button.dataset.searchName || '未知宠物';
+        const searchType = button.dataset.searchType || '未知类型';
+        const searchAge = button.dataset.searchAge ? button.dataset.searchAge + '岁' : '未知';
+        const searchGender = button.dataset.searchGender || '未填写';
+        const searchLocation = button.dataset.searchLocation || '未知位置';
+        const searchLosttime = button.dataset.searchLosttime || '未知时间';
+        const searchContact = button.dataset.searchContact || '未知联系方式';
+        const searchDescription = button.dataset.searchDescription || '暂无描述';
+        const searchImage = button.dataset.searchImage || '';
+        const searchStatus = button.dataset.searchStatus || 'searching';
+
+        // 填充弹窗标题和内容
+        document.getElementById('modalSearchName').textContent = searchName + ' - 寻宠详情';
+        document.getElementById('modalSearchNameText').textContent = searchName;
+        document.getElementById('modalSearchType').textContent = searchType;
+        document.getElementById('modalSearchAge').textContent = searchAge;
+        document.getElementById('modalSearchGender').textContent = searchGender;
+        document.getElementById('modalSearchLocation').textContent = searchLocation;
+        document.getElementById('modalSearchLosttime').textContent = searchLosttime;
+        document.getElementById('modalSearchContact').textContent = searchContact;
+        document.getElementById('modalSearchDescription').textContent = searchDescription;
+
+        // 设置状态样式
+        const statusElement = document.getElementById('modalSearchStatus');
+        if (searchStatus === 'searching') {
+            statusElement.innerHTML = '<span class="record-status search-pet-status-searching"><i class="bi bi-hourglass-half"></i>寻找中</span>';
+        } else {
+            statusElement.innerHTML = '<span class="record-status search-pet-status-found"><i class="bi bi-check-circle"></i>已找回</span>';
+        }
+
+        // 处理寻宠图片
+        const modalImage = document.getElementById('modalSearchImage');
+        if (searchImage && searchImage.trim() !== '') {
+            let imageSrc = '';
+            if (searchImage.startsWith('http')) {
+                imageSrc = searchImage;
+            } else if (searchImage.startsWith('uploads/')) {
+                imageSrc = contextPath + '/uploads/' + searchImage.substring('uploads/'.length);
+            } else {
+                imageSrc = contextPath + '/' + searchImage;
+            }
+            modalImage.src = imageSrc;
+            modalImage.onerror = function() {
+                this.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
+            };
+        } else {
+            modalImage.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
+        }
+    }
 </script>
 </body>
 </html>

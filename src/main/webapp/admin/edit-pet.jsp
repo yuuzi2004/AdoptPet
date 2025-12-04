@@ -4,26 +4,37 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>编辑宠物信息 - 管理员后台</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        /* 全局统一样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         .container-fluid {
             display: flex;
             min-height: 100vh;
+            background-color: #f8f9fa;
         }
-        /* 左侧导航栏样式（匹配你的绿色背景） */
+        /* 左侧导航栏（所有页面统一） */
         .sidebar {
             width: 200px;
             background-color: #e6f7ee;
             padding: 20px 0;
             border-right: 1px solid #b3e0cc;
+            flex-shrink: 0; /* 防止压缩 */
         }
         .sidebar h3 {
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid #b3e0cc;
+            font-size: 18px;
+            color: #2d5016;
         }
         .sidebar .nav {
             list-style: none;
@@ -38,37 +49,89 @@
             color: #333;
             text-decoration: none;
             border-radius: 4px;
+            font-size: 14px;
         }
         .sidebar .nav a:hover {
             background-color: #b3e0cc;
+            color: #000;
         }
         .sidebar .nav a.active {
             background-color: #b3e0cc;
-            font-weight: bold;
+            color: #000;
+            font-weight: 500;
         }
-        /* 右侧内容区 */
+        /* 右侧内容区（所有页面统一尺寸） */
         .main-content {
             flex: 1;
-            padding: 20px;
+            padding: 25px;
+            max-width: calc(100% - 200px); /* 固定右侧宽度 */
+            overflow-y: auto;
         }
-        .header {
+        /* 标题栏（所有页面统一） */
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
         }
-        .section {
+        .page-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        /* 卡片容器（所有页面统一） */
+        .card-container {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        /* 表单样式（统一） */
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .form-control, .form-select {
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            outline: 0;
+        }
+        /* 按钮样式（所有页面统一） */
+        .btn {
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        .btn-sm {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+        /* 图片预览样式 */
+        .img-thumbnail {
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            max-width: 200px;
+        }
+        .form-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
 <div class="container-fluid">
-    <!-- 左侧导航栏 -->
+    <!-- 左侧导航栏（统一） -->
     <div class="sidebar">
         <h3>管理员后台</h3>
         <ul class="nav flex-column">
@@ -95,9 +158,10 @@
         </ul>
     </div>
 
-    <!-- 右侧内容区 -->
+    <!-- 右侧内容区（统一尺寸） -->
     <div class="main-content">
-        <div class="header">
+        <!-- 统一标题栏 -->
+        <div class="page-header">
             <h2><i class="bi bi-pencil me-2"></i>编辑宠物信息</h2>
             <div>
                 欢迎，管理员
@@ -105,7 +169,8 @@
             </div>
         </div>
 
-        <div class="section">
+        <!-- 统一卡片容器 -->
+        <div class="card-container">
             <form action="${pageContext.request.contextPath}/admin/pet/update" method="post" enctype="multipart/form-data">
                 <!-- 隐藏字段存储宠物ID -->
                 <input type="hidden" name="id" value="${pet.id}">
@@ -145,15 +210,15 @@
                         <c:when test="${not empty pet.imagePath}">
                             <c:choose>
                                 <c:when test="${fn:startsWith(pet.imagePath, 'uploads/')}">
-                                    <img src="${pageContext.request.contextPath}/uploads/${fn:substringAfter(pet.imagePath, 'uploads/')}" 
-                                         width="200" 
+                                    <img src="${pageContext.request.contextPath}/uploads/${fn:substringAfter(pet.imagePath, 'uploads/')}"
+                                         width="200"
                                          alt="${pet.name}"
                                          class="img-thumbnail"
                                          onerror="this.src='https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片'">
                                 </c:when>
                                 <c:otherwise>
-                                    <img src="${pageContext.request.contextPath}/${pet.imagePath}" 
-                                         width="200" 
+                                    <img src="${pageContext.request.contextPath}/${pet.imagePath}"
+                                         width="200"
                                          alt="${pet.name}"
                                          class="img-thumbnail"
                                          onerror="this.src='https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片'">
@@ -161,8 +226,8 @@
                             </c:choose>
                         </c:when>
                         <c:otherwise>
-                            <img src="https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片" 
-                                 width="200" 
+                            <img src="https://via.placeholder.com/200x200/a8e6cf/2d5016?text=暂无图片"
+                                 width="200"
                                  alt="暂无图片"
                                  class="img-thumbnail">
                         </c:otherwise>
@@ -172,7 +237,7 @@
                 <div class="mb-3">
                     <label for="image" class="form-label">更换图片（可选）</label>
                     <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                    <small class="form-text text-muted">支持 JPG、PNG、GIF 格式，最大 5MB</small>
+                    <div class="form-text">支持 JPG、PNG、GIF 格式，最大 5MB</div>
                 </div>
 
                 <div class="d-flex gap-2">
@@ -187,6 +252,7 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

@@ -840,6 +840,7 @@
             modalImage.src = 'https://via.placeholder.com/300x200/a8e6cf/2d5016?text=暂无图片';
         }
     }
+    // 修复寻宠信息详情加载函数
     function loadSearchDetail(button) {
         // 获取寻宠基础信息
         const petName = button.dataset.petName || '未知宠物';
@@ -861,11 +862,18 @@
         document.getElementById('modalPetAge').textContent = petAge;
         document.getElementById('modalPetGender').textContent = petGender;
 
-        // 关键修改：使用HTML换行符<br>替换文本换行符
-        const formattedDesc = `丢失位置：${searchLocation}<br>丢失时间：${searchLosttime}<br>联系方式：${searchContact}<br><br>寻宠描述：${petDescription}`;
-        document.getElementById('modalPetDescription').innerHTML = formattedDesc; // 使用innerHTML解析HTML
+        // 关键修复：分开设置基础信息和寻宠专属信息
+        document.getElementById('modalPetDescription').textContent = petDescription;
 
-        // 处理寻宠图片（保持不变）
+        // 显示并填充寻宠专属字段
+        document.querySelectorAll('.search-only').forEach(el => {
+            el.style.display = 'table-row'; // 显示寻宠专属行
+        });
+        document.getElementById('modalSearchLocation').textContent = searchLocation;
+        document.getElementById('modalSearchLosttime').textContent = searchLosttime;
+        document.getElementById('modalSearchContact').textContent = searchContact;
+
+        // 处理寻宠图片
         const modalImage = document.getElementById('modalPetImage');
         if (petImage && petImage.trim() !== '') {
             let imageSrc = '';

@@ -20,7 +20,7 @@ public class AdminLogoutServlet extends HttpServlet {
         // 2. 获取session（不创建新session）
         HttpSession session = req.getSession(false);
         if (session != null) {
-            // 3. 手动清空所有管理员相关属性（避免session销毁不及时）
+            // 3. 手动清空所有管理员相关属性
             session.removeAttribute("adminId");
             session.removeAttribute("adminUsername");
             session.removeAttribute("adminName");
@@ -29,11 +29,11 @@ public class AdminLogoutServlet extends HttpServlet {
             session.invalidate();
         }
 
-        // 5. 跳转登录页并带退出成功提示
-        resp.sendRedirect(req.getContextPath() + "/admin/login.jsp?logout=success");
+        // 5. 跳转到【登录类型选择页】（核心！替换成你实际的选择页路径）
+        // 示例路径：/login-type.jsp （你需要改成自己的文件路径，比如 /pages/select-login.jsp）
+        resp.sendRedirect(req.getContextPath() + "/login_choice.jsp?logout=success");
     }
 
-    // 新增：处理POST请求（避免表单提交方式错误导致退出失败）
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
