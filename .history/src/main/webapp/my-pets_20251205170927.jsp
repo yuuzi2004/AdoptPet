@@ -1002,8 +1002,8 @@
 
     // 统一反馈弹窗（成功/错误/警告，参考 p3 样式）
     (function () {
-        const successMsg = '${fn:escapeXml(not empty param.success ? param.success : success)}';
-        const errorMsg = '${fn:escapeXml(not empty param.error ? param.error : error)}';
+        const successMsg = '${fn:escapeXml(not empty param.success ? param.success : successMessage)}';
+        const errorMsg = '${fn:escapeXml(not empty param.error ? param.error : errorMessage)}';
         const warnMsg = '${fn:escapeXml(param.warn)}';
 
         function showFeedback(type, message) {

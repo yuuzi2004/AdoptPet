@@ -369,12 +369,15 @@
         
         if (type === 'success') {
             title.innerHTML = '<i class="bi bi-check-circle-fill text-success me-2"></i>操作成功';
+            title.querySelector('i').className = 'bi bi-check-circle-fill text-success me-2';
             btn.className = 'btn btn-primary';
         } else if (type === 'error') {
             title.innerHTML = '<i class="bi bi-x-circle-fill text-danger me-2"></i>操作失败';
+            title.querySelector('i').className = 'bi bi-x-circle-fill text-danger me-2';
             btn.className = 'btn btn-danger';
         } else if (type === 'warn') {
             title.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>提示';
+            title.querySelector('i').className = 'bi bi-exclamation-triangle-fill text-warning me-2';
             btn.className = 'btn btn-warning';
         }
         

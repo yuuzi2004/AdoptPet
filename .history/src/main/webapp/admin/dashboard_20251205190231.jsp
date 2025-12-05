@@ -124,36 +124,6 @@
             color: #0f2a0f;
             box-shadow: 0 6px 14px rgba(168, 230, 207, 0.35);
         }
-        /* 统一反馈弹窗样式 */
-        .modal-content {
-            border-radius: 16px;
-            border: 1px solid rgba(168, 230, 207, 0.35);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        }
-        .modal-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: 16px 16px 0 0;
-        }
-        .modal-title {
-            font-weight: 600;
-            color: var(--deep);
-        }
-        .modal-body {
-            font-size: 1.1rem;
-            color: #495057;
-        }
-        .modal-footer .btn-primary {
-            background: linear-gradient(135deg, var(--mint) 0%, var(--blue) 50%, var(--pink) 100%);
-            color: var(--deep);
-            border: none;
-            padding: 0.5rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .modal-footer .btn-primary:hover {
-            color: #0f2a0f;
-            box-shadow: 0 8px 18px rgba(168, 230, 207, 0.45);
-        }
     </style>
 </head>
 <body>
@@ -369,12 +339,15 @@
         
         if (type === 'success') {
             title.innerHTML = '<i class="bi bi-check-circle-fill text-success me-2"></i>操作成功';
+            title.querySelector('i').className = 'bi bi-check-circle-fill text-success me-2';
             btn.className = 'btn btn-primary';
         } else if (type === 'error') {
             title.innerHTML = '<i class="bi bi-x-circle-fill text-danger me-2"></i>操作失败';
+            title.querySelector('i').className = 'bi bi-x-circle-fill text-danger me-2';
             btn.className = 'btn btn-danger';
         } else if (type === 'warn') {
             title.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>提示';
+            title.querySelector('i').className = 'bi bi-exclamation-triangle-fill text-warning me-2';
             btn.className = 'btn btn-warning';
         }
         

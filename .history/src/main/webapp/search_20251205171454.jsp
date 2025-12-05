@@ -296,10 +296,10 @@
                 <div class="modal-body" id="feedbackBody">-</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">好的</button>
+                </div>
+            </div>
         </div>
-        </div>
-        </div>
-        </div>
+    </div>
 
     <div class="search-form-card">
         <h3 class="mb-4" style="color: #2d5016;"><i class="bi bi-file-earmark-plus me-2"></i>发布寻宠信息</h3>
@@ -585,47 +585,6 @@
     // 定义全局上下文路径
     const contextPath = '${pageContext.request.contextPath}';
 
-    // 统一反馈弹窗（参考 p3）
-    function showFeedback(type, message) {
-        if (!message) return;
-        const modalEl = document.getElementById('feedbackModal');
-        if (!modalEl) return;
-        const titleEl = document.getElementById('feedbackTitle');
-        const bodyEl = document.getElementById('feedbackBody');
-        const okBtn = modalEl.querySelector('.btn.btn-primary');
-
-        const iconMap = {
-            success: '<i class="bi bi-check-circle text-success me-2"></i>操作成功',
-            error: '<i class="bi bi-exclamation-triangle text-danger me-2"></i>操作失败',
-            warn: '<i class="bi bi-exclamation-circle text-warning me-2"></i>提示'
-        };
-        titleEl.innerHTML = iconMap[type] || iconMap.warn;
-        bodyEl.textContent = message;
-
-        const modal = new bootstrap.Modal(modalEl);
-        modal.show();
-        if (okBtn) {
-            okBtn.onclick = function () {
-                modal.hide();
-            };
-        }
-    }
-
-    // 页面加载时处理 URL / 属性中的反馈消息
-    (function () {
-        const successMsg = '${fn:escapeXml(param.success != null ? param.success : (param.successMsg != null ? param.successMsg : success))}';
-        const errorMsg = '${fn:escapeXml(param.error != null ? param.error : error)}';
-        const warnMsg = '${fn:escapeXml(param.warn)}';
-
-        if (successMsg) {
-            showFeedback('success', successMsg);
-        } else if (errorMsg) {
-            showFeedback('error', errorMsg);
-        } else if (warnMsg) {
-            showFeedback('warn', warnMsg);
-        }
-    })();
-
     // 图片预览功能
     function previewImage(input) {
         const preview = document.getElementById('imagePreview');
@@ -680,7 +639,7 @@
                 document.getElementById('petImage').files = files;
                 previewImage(document.getElementById('petImage'));
             } else {
-                showFeedback('warn', '请上传图片文件！');
+                alert('请上传图片文件！');
             }
         }
     });
@@ -727,7 +686,7 @@
                         console.error('发布请求出错：', err);
                         loadingIndicator.style.display = 'none';
                         searchResultContainer.style.display = 'block';
-                        showFeedback('error', '发布失败，请重试！');
+                        alert('发布失败，请重试！');
                     });
             });
         }

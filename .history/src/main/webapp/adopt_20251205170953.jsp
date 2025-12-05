@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -283,63 +282,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    (function () {
-        const successMsg = '${fn:escapeXml(success)}';
-        const errorMsg = '${fn:escapeXml(error)}';
-        const warnMsg = '${fn:escapeXml(warn)}';
-
-        function showFeedback(type, message) {
-            if (!message) return;
-            const modalEl = document.getElementById('feedbackModal');
-            if (!modalEl) return;
-            const titleEl = document.getElementById('feedbackTitle');
-            const bodyEl = document.getElementById('feedbackBody');
-            const okBtn = modalEl.querySelector('.btn.btn-primary');
-
-            const iconMap = {
-                success: '<i class="bi bi-check-circle text-success me-2"></i>操作成功',
-                error: '<i class="bi bi-exclamation-triangle text-danger me-2"></i>操作失败',
-                warn: '<i class="bi bi-exclamation-circle text-warning me-2"></i>提示'
-            };
-            titleEl.innerHTML = iconMap[type] || iconMap.warn;
-            bodyEl.textContent = message;
-
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-            if (okBtn) {
-                okBtn.onclick = function () {
-                    modal.hide();
-                };
-            }
+    // 表单验证
+    document.getElementById('adoptForm').addEventListener('submit', function(e) {
+        const reason = document.getElementById('reason').value.trim();
+        const contact = document.getElementById('contact').value.trim();
+        
+        if (reason.length < 50) {
+            e.preventDefault();
+            alert('申请理由至少需要50字，请详细说明您的领养理由！');
+            return false;
         }
-
-        if (successMsg) {
-            showFeedback('success', successMsg);
-        } else if (errorMsg) {
-            showFeedback('error', errorMsg);
-        } else if (warnMsg) {
-            showFeedback('warn', warnMsg);
+        
+        if (contact.length < 5) {
+            e.preventDefault();
+            alert('请输入有效的联系方式！');
+            return false;
         }
-
-        // 表单验证 - 使用统一反馈弹窗
-        const form = document.getElementById('adoptForm');
-        form.addEventListener('submit', function (e) {
-            const reason = document.getElementById('reason').value.trim();
-            const contact = document.getElementById('contact').value.trim();
-
-            if (reason.length < 50) {
-                e.preventDefault();
-                showFeedback('warn', '申请理由至少需要50字，请详细说明您的领养理由！');
-                return false;
-            }
-
-            if (contact.length < 5) {
-                e.preventDefault();
-                showFeedback('warn', '请输入有效的联系方式！');
-                return false;
-            }
-        });
-    })();
+    });
 </script>
 </body>
 </html>

@@ -1000,48 +1000,34 @@
         form.submit();
     }
 
-    // 统一反馈弹窗（成功/错误/警告，参考 p3 样式）
-    (function () {
-        const successMsg = '${fn:escapeXml(not empty param.success ? param.success : success)}';
-        const errorMsg = '${fn:escapeXml(not empty param.error ? param.error : error)}';
-        const warnMsg = '${fn:escapeXml(param.warn)}';
+    // 自动隐藏“删除成功”等成功提示：10秒后淡出并移除
+    document.addEventListener('DOMContentLoaded', function () {
+        var successAlert = document.querySelector('.alert-success');
+        if (!successAlert) return;
 
-        function showFeedback(type, message) {
-            if (!message) return;
-            const modalEl = document.getElementById('feedbackModal');
-            if (!modalEl) return;
-            const titleEl = document.getElementById('feedbackTitle');
-            const bodyEl = document.getElementById('feedbackBody');
-            const okBtn = modalEl.querySelector('.btn.btn-primary');
-
-            const iconMap = {
-                success: '<i class="bi bi-check-circle text-success me-2"></i>操作成功',
-                error: '<i class="bi bi-exclamation-triangle text-danger me-2"></i>操作失败',
-                warn: '<i class="bi bi-exclamation-circle text-warning me-2"></i>提示'
-            };
-            titleEl.innerHTML = iconMap[type] || iconMap.warn;
-            bodyEl.textContent = message;
-
-            // 显示弹窗
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-
-            // 点击“好的”仅关闭，不跳转
-            if (okBtn) {
-                okBtn.onclick = function () {
-                    modal.hide();
-                };
+        setTimeout(function () {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                var bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            } else {
+                successAlert.classList.remove('show');
             }
-        }
+        }, 10000); // 10 秒
+    });
+    // 自动隐藏“删除成功”等成功提示：10秒后淡出并移除
+    document.addEventListener('DOMContentLoaded', function () {
+        var successAlert = document.querySelector('.alert-success');
+        if (!successAlert) return;
 
-        if (successMsg) {
-            showFeedback('success', successMsg);
-        } else if (errorMsg) {
-            showFeedback('error', errorMsg);
-        } else if (warnMsg) {
-            showFeedback('warn', warnMsg);
-        }
-    })();
+        setTimeout(function () {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                var bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            } else {
+                successAlert.classList.remove('show');
+            }
+        }, 10000); // 10 秒
+    });
 </script>
 
 <!-- 通用确认操作弹窗（删除 / 标记已找回等） -->

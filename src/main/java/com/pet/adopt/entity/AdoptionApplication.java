@@ -1,8 +1,10 @@
 package com.pet.adopt.entity;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AdoptionApplication {
+    private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private Integer id;
     private Integer petId;
     private Integer userId;
@@ -50,6 +52,24 @@ public class AdoptionApplication {
      */
     public boolean isPending() {
         return "pending".equals(this.status);
+    }
+
+    // 方便JSP使用的简单状态判断
+    public boolean isApproved() {
+        return "approved".equals(this.status);
+    }
+
+    public boolean isRejected() {
+        return "rejected".equals(this.status);
+    }
+
+    // 简单格式化时间文本，避免在JSP里写脚本片段
+    public String getCreateTimeText() {
+        return createTime != null ? createTime.format(DATETIME_FMT) : "未知";
+    }
+
+    public String getProcessTimeText() {
+        return processTime != null ? processTime.format(DATETIME_FMT) : "处理中";
     }
 
     // ========== 原有Getters and Setters（全部保留，补充pet/user的getName方法） ==========

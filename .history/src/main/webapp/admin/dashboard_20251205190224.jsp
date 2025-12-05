@@ -124,36 +124,6 @@
             color: #0f2a0f;
             box-shadow: 0 6px 14px rgba(168, 230, 207, 0.35);
         }
-        /* 统一反馈弹窗样式 */
-        .modal-content {
-            border-radius: 16px;
-            border: 1px solid rgba(168, 230, 207, 0.35);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        }
-        .modal-header {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: 16px 16px 0 0;
-        }
-        .modal-title {
-            font-weight: 600;
-            color: var(--deep);
-        }
-        .modal-body {
-            font-size: 1.1rem;
-            color: #495057;
-        }
-        .modal-footer .btn-primary {
-            background: linear-gradient(135deg, var(--mint) 0%, var(--blue) 50%, var(--pink) 100%);
-            color: var(--deep);
-            border: none;
-            padding: 0.5rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .modal-footer .btn-primary:hover {
-            color: #0f2a0f;
-            box-shadow: 0 8px 18px rgba(168, 230, 207, 0.45);
-        }
     </style>
 </head>
 <body>
@@ -306,82 +276,5 @@
         </div>
     </div>
 </div>
-
-<!-- 统一反馈弹窗（成功/失败/警告） -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="feedbackModalTitle">
-                    <i class="bi bi-check-circle-fill text-success me-2"></i>操作成功
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center py-4" id="feedbackModalBody">
-                操作成功！
-            </div>
-            <div class="modal-footer border-0 justify-content-center">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="feedbackModalBtn">好的</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.js"></script>
-<script>
-    // 处理领养申请（同意/拒绝）
-    function processApplication(btn) {
-        const applicationId = btn.dataset.applicationId;
-        const action = btn.dataset.action; // 'approved' 或 'rejected'
-        const actionText = action === 'approved' ? '同意' : '拒绝';
-        
-        // 使用 AJAX 提交请求
-        fetch('${pageContext.request.contextPath}/admin/adoption/process?id=' + applicationId + '&status=' + action, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                // 显示成功弹窗
-                showFeedbackModal('success', actionText + '申请成功！');
-                // 延迟刷新页面，让用户看到成功提示
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-            } else {
-                showFeedbackModal('error', actionText + '申请失败，请重试！');
-            }
-        })
-        .catch(error => {
-            console.error('处理申请出错：', error);
-            showFeedbackModal('error', '操作失败，请重试！');
-        });
-    }
-    
-    // 显示统一反馈弹窗
-    function showFeedbackModal(type, message) {
-        const modal = document.getElementById('feedbackModal');
-        const title = document.getElementById('feedbackModalTitle');
-        const body = document.getElementById('feedbackModalBody');
-        const btn = document.getElementById('feedbackModalBtn');
-        
-        if (type === 'success') {
-            title.innerHTML = '<i class="bi bi-check-circle-fill text-success me-2"></i>操作成功';
-            btn.className = 'btn btn-primary';
-        } else if (type === 'error') {
-            title.innerHTML = '<i class="bi bi-x-circle-fill text-danger me-2"></i>操作失败';
-            btn.className = 'btn btn-danger';
-        } else if (type === 'warn') {
-            title.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>提示';
-            btn.className = 'btn btn-warning';
-        }
-        
-        body.textContent = message;
-        const bsModal = new bootstrap.Modal(modal);
-        bsModal.show();
-    }
-</script>
 </body>
 </html>

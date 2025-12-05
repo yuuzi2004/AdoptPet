@@ -296,10 +296,10 @@
                 <div class="modal-body" id="feedbackBody">-</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">好的</button>
+                </div>
+            </div>
         </div>
-        </div>
-        </div>
-        </div>
+    </div>
 
     <div class="search-form-card">
         <h3 class="mb-4" style="color: #2d5016;"><i class="bi bi-file-earmark-plus me-2"></i>发布寻宠信息</h3>

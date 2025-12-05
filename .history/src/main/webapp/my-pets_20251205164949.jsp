@@ -284,23 +284,21 @@
 <!-- 列表区 -->
 <section class="section">
     <div class="container">
-        <!-- 全局反馈弹窗（统一风格） -->
-        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="feedbackTitle">
-                            <i class="bi bi-info-circle me-2"></i>提示
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="feedbackBody">-</div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">好的</button>
-                    </div>
-                </div>
+        <!-- 成功提示 -->
+        <c:if test="${not empty param.success}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>${param.success}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        </div>
+        </c:if>
+
+        <!-- 错误提示 -->
+        <c:if test="${not empty param.error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>${param.error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
 
         <!-- 页面标题和操作按钮 -->
         <!-- 个人中心总标题 -->
@@ -550,7 +548,7 @@
                                         </div>
                                         <c:if test="${application.approved}">
                                             <div class="text-success small mt-2">
-                                                <i class="bi bi-check2-circle me-1"></i>管理员已同意申请，处理时间：${application.processTimeText}
+                                                管理员已同意申请，处理时间：${application.processTimeText}
                                             </div>
                                         </c:if>
                                         <c:if test="${application.rejected}">
@@ -1000,48 +998,34 @@
         form.submit();
     }
 
-    // 统一反馈弹窗（成功/错误/警告，参考 p3 样式）
-    (function () {
-        const successMsg = '${fn:escapeXml(not empty param.success ? param.success : success)}';
-        const errorMsg = '${fn:escapeXml(not empty param.error ? param.error : error)}';
-        const warnMsg = '${fn:escapeXml(param.warn)}';
+    // 自动隐藏“删除成功”等成功提示：10秒后淡出并移除
+    document.addEventListener('DOMContentLoaded', function () {
+        var successAlert = document.querySelector('.alert-success');
+        if (!successAlert) return;
 
-        function showFeedback(type, message) {
-            if (!message) return;
-            const modalEl = document.getElementById('feedbackModal');
-            if (!modalEl) return;
-            const titleEl = document.getElementById('feedbackTitle');
-            const bodyEl = document.getElementById('feedbackBody');
-            const okBtn = modalEl.querySelector('.btn.btn-primary');
-
-            const iconMap = {
-                success: '<i class="bi bi-check-circle text-success me-2"></i>操作成功',
-                error: '<i class="bi bi-exclamation-triangle text-danger me-2"></i>操作失败',
-                warn: '<i class="bi bi-exclamation-circle text-warning me-2"></i>提示'
-            };
-            titleEl.innerHTML = iconMap[type] || iconMap.warn;
-            bodyEl.textContent = message;
-
-            // 显示弹窗
-            const modal = new bootstrap.Modal(modalEl);
-            modal.show();
-
-            // 点击“好的”仅关闭，不跳转
-            if (okBtn) {
-                okBtn.onclick = function () {
-                    modal.hide();
-                };
+        setTimeout(function () {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                var bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            } else {
+                successAlert.classList.remove('show');
             }
-        }
+        }, 10000); // 10 秒
+    });
+    // 自动隐藏“删除成功”等成功提示：10秒后淡出并移除
+    document.addEventListener('DOMContentLoaded', function () {
+        var successAlert = document.querySelector('.alert-success');
+        if (!successAlert) return;
 
-        if (successMsg) {
-            showFeedback('success', successMsg);
-        } else if (errorMsg) {
-            showFeedback('error', errorMsg);
-        } else if (warnMsg) {
-            showFeedback('warn', warnMsg);
-        }
-    })();
+        setTimeout(function () {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                var bsAlert = new bootstrap.Alert(successAlert);
+                bsAlert.close();
+            } else {
+                successAlert.classList.remove('show');
+            }
+        }, 10000); // 10 秒
+    });
 </script>
 
 <!-- 通用确认操作弹窗（删除 / 标记已找回等） -->

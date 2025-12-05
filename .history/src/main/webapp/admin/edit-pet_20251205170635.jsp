@@ -18,12 +18,12 @@
         .container-fluid {
             display: flex;
             min-height: 100vh;
-            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #fff9c4 100%);
+            background-color: #f8f9fa;
         }
         /* 左侧导航栏（所有页面统一） */
         .sidebar {
             width: 200px;
-            background: linear-gradient(135deg, #a8e6cf 0%, #c7ecee 50%, #ffd3d3 100%);
+            background-color: #e6f7ee;
             padding: 20px 0;
             border-right: 1px solid #b3e0cc;
             flex-shrink: 0; /* 防止压缩 */
@@ -32,10 +32,9 @@
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgba(45, 80, 22, 0.15);
+            border-bottom: 1px solid #b3e0cc;
             font-size: 18px;
-            color: #1f3b1f;
-            font-weight: 700;
+            color: #2d5016;
         }
         .sidebar .nav {
             list-style: none;
@@ -47,21 +46,19 @@
         .sidebar .nav a {
             display: block;
             padding: 10px 15px;
-            color: #1f3b1f;
+            color: #333;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 4px;
             font-size: 14px;
-            transition: all 0.2s ease;
         }
         .sidebar .nav a:hover {
-            background: rgba(255, 255, 255, 0.35);
-            color: #0f2a0f;
+            background-color: #b3e0cc;
+            color: #000;
         }
         .sidebar .nav a.active {
-            background: rgba(255, 255, 255, 0.55);
-            color: #0f2a0f;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background-color: #b3e0cc;
+            color: #000;
+            font-weight: 500;
         }
         /* 右侧内容区（所有页面统一尺寸） */
         .main-content {
@@ -88,10 +85,9 @@
         .card-container {
             background: #fff;
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             margin-bottom: 20px;
-            border: 1px solid rgba(168, 230, 207, 0.35);
         }
         /* 表单样式（统一） */
         .form-label {
@@ -114,38 +110,11 @@
         .btn {
             font-size: 14px;
             padding: 6px 12px;
-            border-radius: 8px;
-            border: none;
-            transition: all 0.2s ease;
+            border-radius: 4px;
         }
         .btn-sm {
             font-size: 12px;
-            padding: 4px 10px;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #a8e6cf 0%, #c7ecee 50%, #ffd3d3 100%);
-            color: #1f3b1f;
-        }
-        .btn-primary:hover {
-            color: #0f2a0f;
-            box-shadow: 0 8px 18px rgba(168, 230, 207, 0.45);
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, #ffaaa5 0%, #ffd3d3 100%);
-            color: #7a1c1c;
-        }
-        .btn-danger:hover {
-            box-shadow: 0 8px 18px rgba(255, 170, 165, 0.45);
-            color: #5a1111;
-        }
-        .btn-outline-secondary {
-            border: 1px solid #a8e6cf;
-            color: #1f3b1f;
-        }
-        .btn-outline-secondary:hover {
-            background: linear-gradient(135deg, #a8e6cf 0%, #c7ecee 50%, #ffd3d3 100%);
-            color: #0f2a0f;
-            box-shadow: 0 6px 14px rgba(168, 230, 207, 0.35);
+            padding: 4px 8px;
         }
         /* 图片预览样式 */
         .img-thumbnail {

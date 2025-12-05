@@ -296,10 +296,10 @@
                 <div class="modal-body" id="feedbackBody">-</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">好的</button>
+                </div>
+            </div>
         </div>
-        </div>
-        </div>
-        </div>
+    </div>
 
     <div class="search-form-card">
         <h3 class="mb-4" style="color: #2d5016;"><i class="bi bi-file-earmark-plus me-2"></i>发布寻宠信息</h3>
@@ -680,7 +680,7 @@
                 document.getElementById('petImage').files = files;
                 previewImage(document.getElementById('petImage'));
             } else {
-                showFeedback('warn', '请上传图片文件！');
+                alert('请上传图片文件！');
             }
         }
     });
@@ -727,7 +727,7 @@
                         console.error('发布请求出错：', err);
                         loadingIndicator.style.display = 'none';
                         searchResultContainer.style.display = 'block';
-                        showFeedback('error', '发布失败，请重试！');
+                        alert('发布失败，请重试！');
                     });
             });
         }
