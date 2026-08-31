@@ -1,0 +1,42 @@
+flowchart TB
+    subgraph "表示层 View"
+        A1[JSP页面]
+        A2[HTML/CSS/JS]
+    end
+    
+    subgraph "控制层 Controller"
+        B1[Servlet接收请求]
+        B2[参数验证]
+        B3[调用Service]
+    end
+    
+    subgraph "业务逻辑层 Service"
+        C1[业务规则处理]
+        C2[数据校验]
+        C3[调用DAO]
+    end
+    
+    subgraph "数据访问层 DAO"
+        D1[SQL执行]
+        D2[结果集处理]
+    end
+    
+    subgraph "数据库 Database"
+        E1[MySQL数据库]
+    end
+    
+    A1 --> B1
+    A2 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> C1
+    C1 --> C2
+    C2 --> C3
+    C3 --> D1
+    D1 --> D2
+    D2 --> E1
+    E1 --> D2
+    D2 --> C3
+    C3 --> B3
+    B3 --> A1
+

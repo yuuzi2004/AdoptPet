@@ -1,0 +1,392 @@
+# Cursor 远程 SSH 配置指南
+
+## 问题描述
+
+当远程服务器的 GLIBC 版本（2.31）低于 Cursor 捆绑 Node.js 所需版本（2.32+）时，会出现以下错误：
+
+```
+The bundled NodeJS failed to run, and no system NodeJS executable was found. 
+Please manually install NodeJS 20 or higher on your remote system
+```
+
+## 解决方案
+
+在远程服务器上安装系统级 Node.js 20 或更高版本。Cursor 会自动检测并使用系统的 Node.js，从而绕过 GLIBC 版本限制。
+
+## 安装步骤
+
+### ⭐ 方法一：使用 NVM（无 sudo 权限推荐）
+
+**如果您没有 sudo 权限，这是最佳方案！** NVM 会将 Node.js 安装到您的用户目录（`~/.nvm`），完全不需要 root 权限。
+
+1. **SSH 连接到远程服务器**
+   ```bash
+   ssh your_username@10.100.132.155
+   ```
+
+2. **安装 NVM（无需 sudo）**
+   ```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   ```
+   
+   如果 `curl` 不可用，可以使用 `wget`：
+   ```bash
+   wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   ```
+
+3. **重新加载 shell 配置**
+   ```bash
+   # 对于 bash
+   source ~/.bashrc
+   
+   # 或者对于 zsh
+   source ~/.zshrc
+   
+   # 如果上述命令无效，直接执行：
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   ```
+
+4. **验证 NVM 安装**
+   ```bash
+   nvm --version
+   # 应该显示版本号，如：0.39.0
+   ```
+
+5. **安装 Node.js 20 LTS**
+   ```bash
+   nvm install 20
+   ```
+
+6. **设置 Node.js 20 为默认版本**
+   ```bash
+   nvm use 20
+   nvm alias default 20
+   ```
+
+7. **验证 Node.js 安装**
+   ```bash
+   node --version  # 应该显示 v20.x.x 或更高
+   npm --version   # 应该显示版本号
+   ```
+
+8. **确保 PATH 配置正确**
+   
+   检查 `~/.bashrc` 或 `~/.zshrc` 文件末尾是否包含 NVM 配置：
+   ```bash
+   cat ~/.bashrc | grep nvm
+   ```
+   
+   如果没有，手动添加（通常安装脚本会自动添加）：
+   ```bash
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+   ```
+
+### 方法二：使用 NodeSource 官方仓库（需要 sudo 权限）
+
+如果您有 sudo 权限，可以使用此方法：
+
+1. **安装 NVM**
+   ```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   ```
+
+2. **重新加载 shell 配置**
+   ```bash
+   source ~/.bashrc
+   # 或者
+   source ~/.zshrc
+   ```
+
+3. **安装 Node.js 20**
+   ```bash
+   nvm install 20
+   nvm use 20
+   nvm alias default 20
+   ```
+
+4. **验证安装**
+   ```bash
+   node --version
+   npm --version
+   ```
+
+### 方法三：使用预编译的二进制文件（无 sudo 权限备选方案）
+
+如果 NVM 无法使用（例如网络限制），可以手动下载预编译的 Node.js 二进制文件：
+
+1. **创建安装目录**
+   ```bash
+   mkdir -p ~/nodejs
+   cd ~/nodejs
+   ```
+
+2. **下载 Node.js 预编译二进制文件**
+   ```bash
+   # 下载 Linux x64 版本（根据您的系统架构选择）
+   wget https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz
+   
+   # 解压
+   tar -xf node-v20.11.0-linux-x64.tar.xz
+   ```
+
+3. **添加到 PATH**
+   ```bash
+   # 编辑 ~/.bashrc
+   echo 'export PATH=$HOME/nodejs/node-v20.11.0-linux-x64/bin:$PATH' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+4. **验证安装**
+   ```bash
+   node --version
+   npm --version
+   ```
+
+### 方法四：手动编译安装（需要编译工具，可能需要 sudo）
+
+⚠️ **注意**：此方法需要编译工具，通常需要 sudo 权限安装依赖。不推荐无 sudo 权限使用。
+
+## 配置 PATH（NVM 用户特别注意）
+
+### 对于使用 NVM 的用户
+
+NVM 安装后，**必须确保每次登录时 NVM 都能正确加载**。检查以下内容：
+
+1. **检查 NVM 配置是否在 shell 配置文件中**
+   ```bash
+   # 检查 ~/.bashrc
+   grep -n "NVM_DIR" ~/.bashrc
+   
+   # 如果没有，添加以下内容到 ~/.bashrc 末尾
+   cat >> ~/.bashrc << 'EOF'
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+   EOF
+   ```
+
+2. **重新加载配置**
+   ```bash
+   source ~/.bashrc
+   ```
+
+3. **验证 Node.js 在 PATH 中**
+   ```bash
+   which node
+   # 应该显示：/home/your_username/.nvm/versions/node/v20.x.x/bin/node
+   
+   node --version
+   ```
+
+### 如果 node 命令仍然找不到
+
+1. **查找 Node.js 安装路径**
+   ```bash
+   # NVM 安装的路径
+   ls ~/.nvm/versions/node/
+   
+   # 或者查找
+   find ~ -name node -type f 2>/dev/null | grep bin
+   ```
+
+2. **手动添加到 PATH（临时）**
+   ```bash
+   export PATH=$HOME/.nvm/versions/node/v20.11.0/bin:$PATH
+   ```
+
+3. **永久添加到 PATH**
+   ```bash
+   echo 'export PATH=$HOME/.nvm/versions/node/v20.11.0/bin:$PATH' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+## 验证安装是否成功
+
+在继续之前，请验证所有步骤是否成功：
+
+```bash
+# 1. 验证 NVM 是否可用
+nvm --version
+# 应该显示版本号，如：0.39.0
+
+# 2. 验证 Node.js 是否已安装
+node --version
+# 应该显示 v20.x.x 或更高
+
+# 3. 验证 npm 是否可用
+npm --version
+# 应该显示版本号
+
+# 4. 确认 node 在 PATH 中
+which node
+# 应该显示路径，如：/home_data/hejx/.nvm/versions/node/v20.x.x/bin/node
+```
+
+**如果以上命令都成功，说明安装完成！**
+
+## 重新连接 Cursor
+
+安装完成后：
+
+1. **关闭当前的 Cursor SSH 连接**
+2. **重新连接到远程服务器**
+3. **Cursor 会自动检测系统的 Node.js 并使用它**
+
+## 验证 Cursor 连接
+
+连接成功后，Cursor 应该能够：
+- 成功安装远程服务器组件
+- 正常使用远程开发功能
+
+## 常见问题
+
+### Q1: source ~/.bashrc 时出现 "Permission denied" 错误？
+
+**A:** 这通常是因为 `.bashrc` 中有脚本试图写入系统日志文件（如 `/var/log/history.log`）但没有权限。**这不影响 NVM 的使用**。
+
+**解决方案：**
+1. **直接加载 NVM**（推荐，绕过权限问题）：
+   ```bash
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+   nvm --version  # 验证 NVM 可用
+   ```
+
+2. **然后继续安装 Node.js**：
+   ```bash
+   nvm install 20
+   nvm use 20
+   node --version
+   ```
+
+3. **权限错误可以忽略**，或者联系系统管理员修复 `.bashrc` 中的配置。
+
+### Q2: NVM 安装的 Node.js 仍然报 GLIBC 错误？
+
+**A:** 这说明 NVM 下载的预编译 Node.js 二进制文件也需要更高版本的 GLIBC。**解决方案是安装较旧的 Node.js 版本**，或者使用静态链接版本。
+
+**诊断步骤：**
+```bash
+# 1. 检查当前使用的是哪个 node
+which node
+# 应该显示 NVM 的路径，如：/home_data/hejx/.nvm/versions/node/v20.19.6/bin/node
+
+# 2. 直接测试 NVM 安装的 node
+~/.nvm/versions/node/v20.19.6/bin/node --version
+# 如果这个也报 GLIBC 错误，说明这个版本不兼容
+```
+
+**解决方案：**
+
+**方法 1: 安装较旧的 Node.js 版本（推荐）**
+
+较旧的 Node.js 版本可能对 GLIBC 要求较低：
+
+```bash
+# 尝试安装 Node.js 16（最后一个支持 GLIBC 2.31 的版本）
+nvm install 16
+nvm use 16
+nvm alias default 16
+node --version  # 测试是否能运行
+
+# 如果 16 不行，尝试 14
+nvm install 14
+nvm use 14
+node --version
+
+# 或者尝试 Node.js 18 的早期版本
+nvm install 18.0.0
+nvm use 18.0.0
+node --version
+```
+
+**方法 2: 使用静态链接的 Node.js（如果可用）**
+
+某些 Node.js 发行版提供静态链接版本，不依赖系统 GLIBC：
+
+```bash
+# 下载静态链接版本（需要手动操作）
+# 访问 https://nodejs.org/dist/ 查找适合的版本
+```
+
+**方法 3: 检查系统库版本问题**
+
+如果所有 Node.js 版本都报同样的 GLIBC 错误，可能是系统的 `libstdc++` 版本太新：
+
+```bash
+# 检查 libstdc++ 版本
+strings /lib/x86_64-linux-gnu/libstdc++.so.6 | grep GLIBC
+
+# 检查当前使用的 node 路径
+which node
+# 确保使用的是 NVM 的 node，而不是系统的
+
+# 直接测试 NVM 安装的 node
+~/.nvm/versions/node/v16.20.2/bin/node --version
+```
+
+**方法 4: 使用静态链接的 Node.js 或从源码编译**
+
+如果预编译版本都不行，可能需要：
+- 使用静态链接的 Node.js 版本（不依赖系统库）
+- 从源码编译 Node.js（需要编译工具，可能需要 sudo）
+- 联系系统管理员升级 GLIBC 或降级 libstdc++
+
+**方法 5: 使用预编译的旧系统兼容版本**
+
+尝试下载专门为旧系统编译的 Node.js 版本。
+
+### Q3: 安装后仍然报错？
+
+**A:** 确保 Node.js 在 PATH 中，并且版本 >= 20：
+```bash
+which node
+node --version
+```
+
+### Q2: 没有 sudo 权限怎么办？
+
+**A:** **使用 NVM（方法一）**，这是无 sudo 权限的最佳方案。NVM 会将所有内容安装到您的用户目录（`~/.nvm`），完全不需要 root 权限。
+
+如果 NVM 无法使用，可以尝试方法三（预编译二进制文件）。
+
+### Q3: 如何卸载旧版本 Node.js？
+
+**A:** 
+```bash
+# 如果通过 apt 安装
+sudo apt-get remove nodejs npm
+
+# 如果通过 NVM 安装
+nvm uninstall <version>
+```
+
+### Q4: 如何检查 GLIBC 版本？
+
+**A:**
+```bash
+ldd --version
+# 或
+/lib/x86_64-linux-gnu/libc.so.6
+```
+
+## 注意事项
+
+1. **Node.js 版本要求**：必须 >= 20.0.0
+2. **PATH 配置**：确保 `node` 命令在 PATH 中
+3. **无 sudo 权限**：**强烈推荐使用 NVM（方法一）**，它完全不需要 root 权限
+4. **Shell 配置**：使用 NVM 时，确保在 `.bashrc` 或 `.zshrc` 中正确配置 NVM，这样每次登录时 Node.js 都会自动可用
+5. **Cursor 检测**：Cursor 会检查 `PATH` 环境变量中的 `node` 命令，确保 `which node` 能找到 Node.js
+6. **防火墙**：确保远程服务器可以访问互联网以下载 Cursor 服务器组件
+7. **网络问题**：如果无法访问 GitHub（NVM 安装需要），可以尝试使用预编译二进制文件（方法三）
+
+## 参考链接
+
+- [Node.js 官方下载](https://nodejs.org/)
+- [NodeSource 安装指南](https://github.com/nodesource/distributions)
+- [NVM 官方文档](https://github.com/nvm-sh/nvm)
+

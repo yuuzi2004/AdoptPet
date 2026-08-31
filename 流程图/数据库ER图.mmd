@@ -1,0 +1,65 @@
+erDiagram
+    User ||--o{ AdoptionApplication : "申请"
+    Pet ||--o{ AdoptionApplication : "被申请"
+    User ||--o{ Pet : "发布"
+    User ||--o{ PetSearch : "发布"
+    
+    User {
+        int id PK
+        string username UK
+        string email UK
+        string phone
+        string password
+        datetime create_time
+        datetime last_login_time
+    }
+    
+    Pet {
+        int id PK
+        string name
+        string type
+        int age
+        string gender
+        text description
+        string image_path
+        int user_id FK
+        datetime create_time
+    }
+    
+    AdoptionApplication {
+        int id PK
+        int pet_id FK
+        int user_id FK
+        text reason
+        string contact
+        string status
+        datetime create_time
+        datetime process_time
+    }
+    
+    PetSearch {
+        int id PK
+        string name
+        string type
+        int age
+        string gender
+        string location
+        datetime lost_time
+        text description
+        string image_path
+        string contact
+        int user_id FK
+        string status
+        datetime create_time
+    }
+    
+    Admin {
+        int id PK
+        string username UK
+        string password
+        string name
+        string role
+        datetime create_time
+        datetime last_login_time
+    }
+
